@@ -41,5 +41,5 @@ void Rental::setCalculatedAmounts(const FinancialCalculator& calc, int days)
 double Rental::closeRental(double overdueFine)
 {
     m_status = "closed";
-    return m_rentalCost + overdueFine; // return amount to charge
+    return m_rentalCost + overdueFine;
 }
