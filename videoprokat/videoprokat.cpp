@@ -60,6 +60,7 @@ int main()
     std::cout << inv << "\n";
 
     for (auto* p : pointerArray) delete p;
+    pointerArray.clear();
     // Освобождение памяти
     delete dynClient;
     delete dynItem;
