@@ -34,6 +34,15 @@ public class CatalogReal extends Catalog {
         return null;
     }
 
+    public VideoCarrier findItemByNumberWithException(int number) throws ItemNotFoundException {
+        for (VideoCarrier item : items) {
+            if (item != null && item.getInventoryNumber() == number) {
+                return item;
+            }
+        }
+        throw new ItemNotFoundException("Элемент с номером " + number + " не найден в каталоге", number);
+    }
+
     @Override
     public List<VideoCarrier> findItemsByTitle(String title) {
         List<VideoCarrier> result = new ArrayList<>();

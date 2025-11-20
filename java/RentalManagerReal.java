@@ -39,6 +39,41 @@ public class RentalManagerReal extends RentalManager {
         return rental;
     }
 
+    public Rental createRentalWithException(Client client, List<VideoCarrier> items, int days,
+                                            String rentalDate, String plannedReturnDate) throws RentalException {
+        if (client == null) {
+            throw new RentalException("Клиент не может быть null");
+        }
+        if (items == null || items.isEmpty()) {
+            throw new RentalException("Список носителей не может быть пустым");
+        }
+        if (days <= 0) {
+            throw new RentalException("Количество дней должно быть положительным: " + days);
+        }
+        
+        for (VideoCarrier item : items) {
+            if (item == null) {
+                throw new RentalException("Элемент в списке не может быть null");
+            }
+            if (!item.isAvailable()) {
+                throw new RentalException("Носитель " + item.getTitle() + " недоступен для аренды");
+            }
+        }
+        
+        try {
+            List<VideoCarrier> safeItems = new ArrayList<>(items);
+            Rental rental = new RentalReal(nextId++, client, safeItems, rentalDate, plannedReturnDate);
+            rental.setCalculatedAmounts(calculator, days);
+            for (VideoCarrier item : safeItems) {
+                item.markAsRented();
+            }
+            activeRentals.add(rental);
+            return rental;
+        } catch (Exception e) {
+            throw new RentalException("Ошибка при создании аренды: " + e.getMessage(), e);
+        }
+    }
+
     @Override
     public double processReturn(Rental rental, int overdueDays) {
         if (rental == null) {
@@ -78,6 +113,14 @@ public class RentalManagerReal extends RentalManager {
             activeRentals.clear();
         }
         calculator = null;
+    }
+
+    public static int getNextRentalId() {
+        return nextId;
+    }
+
+    public static void resetRentalIdCounter() {
+        nextId = 1;
     }
 
     /**

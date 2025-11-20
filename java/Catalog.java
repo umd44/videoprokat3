@@ -28,6 +28,14 @@ public abstract class Catalog {
     public abstract VideoCarrier findItemByNumber(int number);
 
     /**
+     * Найти носитель по инвентарному номеру с выбрасыванием исключения, если не найден.
+     * @param number номер элемента
+     * @return найденный элемент
+     * @throws ItemNotFoundException если элемент не найден
+     */
+    public abstract VideoCarrier findItemByNumberWithException(int number) throws ItemNotFoundException;
+
+    /**
      * Найти все носители по названию.
      */
     public abstract List<VideoCarrier> findItemsByTitle(String title);
