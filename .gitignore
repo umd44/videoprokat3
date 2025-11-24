@@ -1,0 +1,52 @@
+# IDE and Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-workspace
+*.sublime-project
+
+# Build artifacts
+bin/
+build/
+dist/
+out/
+
+# Java-related
+*.class
+*.jar
+*.war
+*.ear
+target/
+.classpath
+.project
+.settings/
+
+# C++ related
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.dylib
+CMakeFiles/
+cmake_install.cmake
+Makefile
+CMakeCache.txt
+
+# Visual Studio related
+.vs/
+*.sln.docstates
+*.user
+*.VC.db
+
+# OS files
+.DS_Store
+Thumbs.db
+.directory
+
+# Temporary files
+*.tmp
+*.bak
+*.log
