@@ -1,0 +1,41 @@
+# Compiled files
+*.class
+*.o
+*.exe
+*.dll
+*.so
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# Build directories
+bin/
+obj/
+out/
+build/
+dist/
+
+# VS project files
+.vs/
+*.vcxproj.user
+*.vcxproj.filters
+
+# Java
+target/
+.classpath
+.project
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
