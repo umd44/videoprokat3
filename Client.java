@@ -70,13 +70,26 @@ public abstract class Client {
 
     /**
      * Пополнить депозит клиента.
+     * Не абстрактный метод с реализацией по умолчанию для возможности переопределения.
      */
-    public abstract void addToDeposit(double amount);
+    public void addToDeposit(double amount) {
+        if (amount > 0.0) {
+            depositBalance += amount;
+        }
+    }
 
     /**
      * Заблокировать средства депозита.
+     * Не абстрактный метод с реализацией по умолчанию для возможности переопределения.
      */
-    public abstract boolean blockDepositFunds(double amount);
+    public boolean blockDepositFunds(double amount) {
+        if (amount <= 0.0) return false;
+        if (depositBalance >= amount) {
+            depositBalance -= amount;
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Разблокировать средства депозита.

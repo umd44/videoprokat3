@@ -1,0 +1,42 @@
+# Compiled files
+*.class
+*.o
+*.obj
+*.exe
+*.out
+
+# Java
+*.jar
+*.war
+*.ear
+
+# C++ builds
+videoprokat/InheritanceDemo
+videoprokat/videoprokat
+videoprokat/*.exe
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.suo
+*.user
+*.ncb
+*.sdf
+*.opensdf
+*.vcxproj.user
+
+# Build directories
+bin/
+build/
+out/
+target/
+.vs/
+Debug/
+Release/
+x64/
+x86/
+
+# OS
+.DS_Store
+Thumbs.db

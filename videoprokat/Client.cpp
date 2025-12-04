@@ -1,4 +1,5 @@
 #include "Client.hpp"
+#include <iostream>
 
 Client::Client()
     : m_clientId(0), m_depositBalance(0.0), m_isBlacklisted(false)
@@ -16,6 +17,11 @@ Client::Client(int clientId,
       m_depositBalance(0.0),
       m_isBlacklisted(false)
 {
+}
+
+Client::~Client()
+{
+    std::cout << "Деструктор Client для " << m_firstName << "\n";
 }
 
 int Client::getClientId() const { return m_clientId; }
@@ -53,4 +59,10 @@ void Client::unblockDepositFunds(double amount)
 void Client::setBlacklisted(bool value)
 {
     m_isBlacklisted = value;
+}
+
+void Client::processTransaction(double amount)
+{
+    std::cout << "Client::processTransaction вызывает виртуальную addToDeposit()\n";
+    addToDeposit(amount);
 }

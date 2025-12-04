@@ -1,4 +1,5 @@
 #include "VideoCarrier.hpp"
+#include <iostream>
 
 VideoCarrier::VideoCarrier()
     : m_inventoryNumber(0),
@@ -22,6 +23,11 @@ VideoCarrier::VideoCarrier(int inventoryNumber,
       m_fullPrice(fullPrice),
       m_status("available")
 {
+}
+
+VideoCarrier::~VideoCarrier()
+{
+    std::cout << "Деструктор VideoCarrier для " << m_title << "\n";
 }
 
 int VideoCarrier::getInventoryNumber() const { return m_inventoryNumber; }

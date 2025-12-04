@@ -128,8 +128,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="videoprokat.cpp" />
+    <ClCompile Include="InheritanceDemo.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="PremiumClient.cpp" />
     <ClCompile Include="VideoCarrier.cpp" />
+    <ClCompile Include="DVDCarrier.cpp" />
+    <ClCompile Include="BluRayCarrier.cpp" />
+    <ClCompile Include="PaymentProcessor.cpp" />
     <ClCompile Include="FinancialCalculator.cpp" />
     <ClCompile Include="Rental.cpp" />
     <ClCompile Include="Catalog.cpp" />
@@ -138,7 +143,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.hpp" />
+    <ClInclude Include="PremiumClient.hpp" />
     <ClInclude Include="VideoCarrier.hpp" />
+    <ClInclude Include="DVDCarrier.hpp" />
+    <ClInclude Include="BluRayCarrier.hpp" />
+    <ClInclude Include="PaymentProcessor.hpp" />
     <ClInclude Include="FinancialCalculator.hpp" />
     <ClInclude Include="Rental.hpp" />
     <ClInclude Include="Catalog.hpp" />

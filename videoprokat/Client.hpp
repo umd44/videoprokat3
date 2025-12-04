@@ -12,7 +12,11 @@ public:
            const std::string& firstName,
            const std::string& lastName,
            const std::string& phoneNumber);
-    ~Client() = default;
+    
+    /**
+     * Виртуальный деструктор для корректного удаления производных классов.
+     */
+    virtual ~Client();
 
     // Идентификатор клиента
     int getClientId() const;
@@ -27,16 +31,25 @@ public:
     // Флаг «в черном списке»
     bool getIsBlacklisted() const;
 
+    /**
+     * Виртуальные методы для демонстрации полиморфизма.
+     */
     // Пополнение залога
-    void addToDeposit(double amount);
+    virtual void addToDeposit(double amount);
     // Блокировка части залога (возврат false, если не хватает средств)
-    bool blockDepositFunds(double amount);
+    virtual bool blockDepositFunds(double amount);
     // Разблокировка средств залога
     void unblockDepositFunds(double amount);
     // Установка флага «в черном списке»
     void setBlacklisted(bool value);
+    
+    /**
+     * Не виртуальная функция, которая вызывает виртуальную.
+     * Демонстрирует вызов виртуальной функции через не виртуальную.
+     */
+    void processTransaction(double amount);
 
-private:
+protected:
     int m_clientId;
     std::string m_firstName;
     std::string m_lastName;

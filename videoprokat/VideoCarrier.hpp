@@ -14,7 +14,11 @@ public:
                  const std::string& genre,
                  double rentalPricePerDay,
                  double fullPrice);
-    ~VideoCarrier() = default;
+    
+    /**
+     * Виртуальный деструктор для корректного удаления производных классов.
+     */
+    virtual ~VideoCarrier();
 
     // Инвентарный номер
     int getInventoryNumber() const;
@@ -33,12 +37,16 @@ public:
 
     // Доступен ли для аренды
     bool isAvailable() const;
+    
+    /**
+     * Виртуальные методы для демонстрации полиморфизма.
+     */
     // Пометить как арендованный
-    void markAsRented();
+    virtual void markAsRented();
     // Пометить как доступный
-    void markAsAvailable();
+    virtual void markAsAvailable();
 
-private:
+protected:
     int m_inventoryNumber;
     std::string m_title;
     std::string m_carrierType;

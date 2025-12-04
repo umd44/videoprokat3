@@ -84,11 +84,17 @@ public abstract class VideoCarrier {
 
     /**
      * Пометить носитель как арендованный.
+     * Не абстрактный метод с реализацией по умолчанию для возможности переопределения.
      */
-    public abstract void markAsRented();
+    public void markAsRented() {
+        status = "rented";
+    }
 
     /**
      * Пометить носитель как доступный.
+     * Не абстрактный метод с реализацией по умолчанию для возможности переопределения.
      */
-    public abstract void markAsAvailable();
+    public void markAsAvailable() {
+        status = "available";
+    }
 }
