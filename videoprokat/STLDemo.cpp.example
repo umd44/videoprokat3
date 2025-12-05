@@ -1,0 +1,381 @@
+#include <iostream>
+#include <vector>
+#include <list>
+#include <map>
+#include <array>
+#include <algorithm>
+#include <numeric>
+#include <variant>
+#include <ranges>
+
+#include "Client.hpp"
+#include "PremiumClient.hpp"
+#include "VideoCarrier.hpp"
+#include "DVDCarrier.hpp"
+#include "BluRayCarrier.hpp"
+#include "Repository.hpp"
+#include "TemplateUtils.hpp"
+
+void demonstrateSTLContainers()
+{
+    std::cout << "\n=== ДЕМОНСТРАЦИЯ STL КОНТЕЙНЕРОВ ===\n\n";
+    
+    // 1. std::array - массив фиксированного размера
+    std::cout << "1. std::array - фиксированный массив:\n";
+    std::array<double, 5> prices = {50.0, 60.0, 45.0, 70.0, 55.0};
+    std::cout << "   Цены аренды: ";
+    for (const auto& price : prices) {
+        std::cout << price << " ";
+    }
+    std::cout << "\n";
+    
+    // 2. std::vector - динамический массив
+    std::cout << "\n2. std::vector - динамический массив:\n";
+    std::vector<int> inventoryNumbers = {100, 101, 102, 103, 104};
+    inventoryNumbers.push_back(105);
+    std::cout << "   Инвентарные номера: ";
+    for (const auto& num : inventoryNumbers) {
+        std::cout << num << " ";
+    }
+    std::cout << "\n   Размер: " << inventoryNumbers.size() << "\n";
+    
+    // 3. std::list - двусвязный список
+    std::cout << "\n3. std::list - двусвязный список:\n";
+    std::list<std::string> genres = {"Sci-Fi", "Action", "Drama", "Comedy"};
+    genres.push_front("Horror");
+    std::cout << "   Жанры: ";
+    for (const auto& genre : genres) {
+        std::cout << genre << " ";
+    }
+    std::cout << "\n";
+    
+    // 4. std::map - ассоциативный контейнер
+    std::cout << "\n4. std::map - словарь:\n";
+    std::map<int, std::string> clientNames;
+    clientNames[1] = "Иван Иванов";
+    clientNames[2] = "Петр Петров";
+    clientNames[3] = "Сидор Сидоров";
+    std::cout << "   Клиенты:\n";
+    for (const auto& [id, name] : clientNames) {
+        std::cout << "   ID " << id << ": " << name << "\n";
+    }
+}
+
+void demonstrateSTLAlgorithms()
+{
+    std::cout << "\n=== ДЕМОНСТРАЦИЯ STL АЛГОРИТМОВ ===\n\n";
+    
+    std::vector<double> prices = {50.0, 60.0, 45.0, 70.0, 55.0, 40.0};
+    
+    // std::min_element, std::max_element
+    std::cout << "1. Поиск минимума и максимума:\n";
+    auto minIt = std::min_element(prices.begin(), prices.end());
+    auto maxIt = std::max_element(prices.begin(), prices.end());
+    std::cout << "   Минимальная цена: " << *minIt << "\n";
+    std::cout << "   Максимальная цена: " << *maxIt << "\n";
+    
+    // std::find, std::find_if
+    std::cout << "\n2. Поиск элементов:\n";
+    auto findIt = std::find(prices.begin(), prices.end(), 60.0);
+    if (findIt != prices.end()) {
+        std::cout << "   Найдена цена 60.0 на позиции " 
+                  << std::distance(prices.begin(), findIt) << "\n";
+    }
+    
+    auto findIfIt = std::find_if(prices.begin(), prices.end(), 
+                                  [](double p) { return p > 65.0; });
+    if (findIfIt != prices.end()) {
+        std::cout << "   Первая цена > 65.0: " << *findIfIt << "\n";
+    }
+    
+    // std::copy, std::copy_if
+    std::cout << "\n3. Копирование элементов:\n";
+    std::vector<double> expensivePrices;
+    std::copy_if(prices.begin(), prices.end(), 
+                 std::back_inserter(expensivePrices),
+                 [](double p) { return p >= 55.0; });
+    std::cout << "   Дорогие цены (>= 55): ";
+    for (const auto& price : expensivePrices) {
+        std::cout << price << " ";
+    }
+    std::cout << "\n";
+    
+    // std::remove, std::remove_if
+    std::cout << "\n4. Удаление элементов:\n";
+    std::vector<double> pricesCopy = prices;
+    auto newEnd = std::remove_if(pricesCopy.begin(), pricesCopy.end(),
+                                  [](double p) { return p < 50.0; });
+    pricesCopy.erase(newEnd, pricesCopy.end());
+    std::cout << "   После удаления цен < 50: ";
+    for (const auto& price : pricesCopy) {
+        std::cout << price << " ";
+    }
+    std::cout << "\n";
+    
+    // std::sort
+    std::cout << "\n5. Сортировка:\n";
+    std::vector<double> unsorted = {60.0, 40.0, 70.0, 45.0, 55.0};
+    std::cout << "   До сортировки: ";
+    for (const auto& price : unsorted) {
+        std::cout << price << " ";
+    }
+    std::sort(unsorted.begin(), unsorted.end());
+    std::cout << "\n   После сортировки: ";
+    for (const auto& price : unsorted) {
+        std::cout << price << " ";
+    }
+    std::cout << "\n";
+    
+    // std::transform
+    std::cout << "\n6. Преобразование элементов:\n";
+    std::vector<double> discounted;
+    std::transform(prices.begin(), prices.end(), 
+                   std::back_inserter(discounted),
+                   [](double p) { return p * 0.9; });
+    std::cout << "   Цены со скидкой 10%: ";
+    for (const auto& price : discounted) {
+        std::cout << price << " ";
+    }
+    std::cout << "\n";
+    
+    // std::any_of
+    std::cout << "\n7. Проверка условий:\n";
+    bool hasExpensive = std::any_of(prices.begin(), prices.end(),
+                                    [](double p) { return p > 65.0; });
+    std::cout << "   Есть цены > 65: " << (hasExpensive ? "Да" : "Нет") << "\n";
+}
+
+void demonstrateTemplates()
+{
+    std::cout << "\n=== ДЕМОНСТРАЦИЯ ШАБЛОННЫХ ФУНКЦИЙ ===\n\n";
+    
+    // Вычисление среднего значения
+    std::cout << "1. Шаблонная функция calculateAverage:\n";
+    std::vector<double> prices = {50.0, 60.0, 45.0, 70.0, 55.0};
+    double avgPrice = calculateAverage(prices);
+    std::cout << "   Средняя цена аренды: " << avgPrice << "\n";
+    
+    std::vector<int> ratings = {5, 4, 5, 3, 4, 5};
+    double avgRating = calculateAverage(ratings);
+    std::cout << "   Средний рейтинг: " << avgRating << "\n";
+    
+    // Поиск минимума и максимума
+    std::cout << "\n2. Шаблонная функция findMinMax:\n";
+    auto [minPrice, maxPrice] = findMinMax(prices);
+    std::cout << "   Мин. цена: " << minPrice << ", Макс. цена: " << maxPrice << "\n";
+    
+    // Фильтрация
+    std::cout << "\n3. Шаблонная функция filterElements:\n";
+    auto expensive = filterElements(prices, [](double p) { return p >= 55.0; });
+    std::cout << "   Дорогие цены: ";
+    for (const auto& price : expensive) {
+        std::cout << price << " ";
+    }
+    std::cout << "\n";
+    
+    // Преобразование
+    std::cout << "\n4. Шаблонная функция transformElements:\n";
+    auto discounted = transformElements<double, double>(prices, 
+                                                        [](double p) { return p * 0.85; });
+    std::cout << "   Цены со скидкой 15%: ";
+    for (const auto& price : discounted) {
+        std::cout << price << " ";
+    }
+    std::cout << "\n";
+    
+    // Подсчет
+    std::cout << "\n5. Шаблонная функция countIf:\n";
+    size_t expensiveCount = countIf(prices, [](double p) { return p > 50.0; });
+    std::cout << "   Количество цен > 50: " << expensiveCount << "\n";
+    
+    // Проверка any_of
+    std::cout << "\n6. Шаблонная функция anyOf:\n";
+    bool hasVeryExpensive = anyOf(prices, [](double p) { return p > 100.0; });
+    std::cout << "   Есть цены > 100: " << (hasVeryExpensive ? "Да" : "Нет") << "\n";
+}
+
+void demonstrateRepositoryWithPolymorphism()
+{
+    std::cout << "\n=== ШАБЛОННЫЙ КЛАСС С ПОЛИМОРФИЗМОМ ===\n\n";
+    
+    std::cout << "1. Repository<VideoCarrier> с базовыми и производными классами:\n";
+    
+    // Создание репозитория
+    Repository<VideoCarrier> repo;
+    
+    // Добавление объектов разных типов
+    repo.add(new VideoCarrier(100, "Classic", "VHS", "Drama", 30.0, 300.0));
+    repo.add(new DVDCarrier(101, "Modern", "Action", 45.0, 450.0, 1, "2"));
+    repo.add(new BluRayCarrier(102, "New Release", "Sci-Fi", 60.0, 600.0, true, true));
+    repo.add(new DVDCarrier(103, "Oldies", "Comedy", 40.0, 400.0, 2, "1"));
+    
+    std::cout << "   Добавлено носителей: " << repo.size() << "\n";
+    
+    // Поиск элемента
+    std::cout << "\n2. Поиск элемента с номером 102:\n";
+    auto found = repo.findIf([](VideoCarrier* vc) { 
+        return vc->getInventoryNumber() == 102; 
+    });
+    if (found) {
+        std::cout << "   Найден: " << found->getTitle() 
+                  << " (" << found->getCarrierType() << ")\n";
+    }
+    
+    // Поиск всех элементов по условию
+    std::cout << "\n3. Поиск всех дорогих носителей (>= 50):\n";
+    auto expensive = repo.findAll([](VideoCarrier* vc) {
+        return vc->getRentalPricePerDay() >= 50.0;
+    });
+    std::cout << "   Найдено: " << expensive.size() << " носителей\n";
+    for (const auto& item : expensive) {
+        std::cout << "   - " << item->getTitle() << ": " 
+                  << item->getRentalPricePerDay() << " руб/день\n";
+    }
+    
+    // Сортировка
+    std::cout << "\n4. Сортировка по цене:\n";
+    repo.sort([](VideoCarrier* a, VideoCarrier* b) {
+        return a->getRentalPricePerDay() < b->getRentalPricePerDay();
+    });
+    std::cout << "   После сортировки:\n";
+    repo.forEach([](VideoCarrier* vc) {
+        std::cout << "   - " << vc->getTitle() << ": " 
+                  << vc->getRentalPricePerDay() << " руб/день\n";
+    });
+    
+    // Удаление по условию
+    std::cout << "\n5. Удаление дешевых носителей (< 40):\n";
+    size_t removed = repo.removeIf([](VideoCarrier* vc) {
+        return vc->getRentalPricePerDay() < 40.0;
+    });
+    std::cout << "   Удалено: " << removed << " носителей\n";
+    std::cout << "   Осталось: " << repo.size() << " носителей\n";
+    
+    // Очистка
+    repo.clear();
+}
+
+void demonstrateVariant()
+{
+    std::cout << "\n=== ДЕМОНСТРАЦИЯ std::variant ===\n\n";
+    
+    // std::variant может хранить один из нескольких типов
+    using ClientData = std::variant<int, double, std::string>;
+    
+    std::cout << "1. std::variant для хранения разных типов данных:\n";
+    
+    ClientData clientId = 123;
+    std::cout << "   ID клиента (int): " << std::get<int>(clientId) << "\n";
+    
+    clientId = 99.99;
+    std::cout << "   Баланс (double): " << std::get<double>(clientId) << "\n";
+    
+    clientId = std::string("Иван Иванов");
+    std::cout << "   Имя (string): " << std::get<std::string>(clientId) << "\n";
+    
+    // Проверка текущего типа
+    std::cout << "\n2. Проверка типа в variant:\n";
+    if (std::holds_alternative<std::string>(clientId)) {
+        std::cout << "   Текущий тип: string\n";
+    }
+    
+    // Visitor pattern с variant
+    std::cout << "\n3. Использование visitor с variant:\n";
+    std::visit([](auto&& value) {
+        std::cout << "   Значение: " << value << "\n";
+    }, clientId);
+}
+
+void demonstrateRanges()
+{
+    std::cout << "\n=== ДЕМОНСТРАЦИЯ RANGES (C++20) ===\n\n";
+    
+    std::vector<int> numbers = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    
+#if __cplusplus >= 202002L
+    std::cout << "1. Фильтрация с помощью ranges (четные числа):\n";
+    auto evenNumbers = numbers | std::views::filter([](int n) { return n % 2 == 0; });
+    std::cout << "   Четные числа: ";
+    for (int n : evenNumbers) {
+        std::cout << n << " ";
+    }
+    std::cout << "\n";
+    
+    std::cout << "\n2. Преобразование с помощью ranges (умножение на 2):\n";
+    auto doubled = numbers | std::views::transform([](int n) { return n * 2; });
+    std::cout << "   Удвоенные числа: ";
+    for (int n : doubled) {
+        std::cout << n << " ";
+    }
+    std::cout << "\n";
+    
+    std::cout << "\n3. Комбинирование фильтра и преобразования:\n";
+    auto result = numbers 
+                | std::views::filter([](int n) { return n > 5; })
+                | std::views::transform([](int n) { return n * n; });
+    std::cout << "   Квадраты чисел > 5: ";
+    for (int n : result) {
+        std::cout << n << " ";
+    }
+    std::cout << "\n";
+#else
+    std::cout << "C++20 Ranges не поддерживаются в C++17.\n";
+    std::cout << "Компилируйте с -std=c++20 для использования ranges.\n\n";
+    
+    // Альтернативная реализация без ranges
+    std::cout << "Альтернативная реализация с алгоритмами STL:\n\n";
+    
+    std::cout << "1. Фильтрация (четные числа):\n";
+    std::vector<int> evenNumbers;
+    std::copy_if(numbers.begin(), numbers.end(), std::back_inserter(evenNumbers),
+                 [](int n) { return n % 2 == 0; });
+    std::cout << "   Четные числа: ";
+    for (int n : evenNumbers) {
+        std::cout << n << " ";
+    }
+    std::cout << "\n";
+    
+    std::cout << "\n2. Преобразование (умножение на 2):\n";
+    std::vector<int> doubled;
+    std::transform(numbers.begin(), numbers.end(), std::back_inserter(doubled),
+                   [](int n) { return n * 2; });
+    std::cout << "   Удвоенные числа: ";
+    for (int n : doubled) {
+        std::cout << n << " ";
+    }
+    std::cout << "\n";
+    
+    std::cout << "\n3. Комбинирование фильтра и преобразования:\n";
+    std::vector<int> filtered;
+    std::copy_if(numbers.begin(), numbers.end(), std::back_inserter(filtered),
+                 [](int n) { return n > 5; });
+    std::vector<int> result;
+    std::transform(filtered.begin(), filtered.end(), std::back_inserter(result),
+                   [](int n) { return n * n; });
+    std::cout << "   Квадраты чисел > 5: ";
+    for (int n : result) {
+        std::cout << n << " ";
+    }
+    std::cout << "\n";
+#endif
+}
+
+int main()
+{
+    std::cout << "╔══════════════════════════════════════════════════════════╗\n";
+    std::cout << "║   ДЕМОНСТРАЦИЯ STL И ШАБЛОНОВ C++                       ║\n";
+    std::cout << "╚══════════════════════════════════════════════════════════╝\n";
+    
+    demonstrateSTLContainers();
+    demonstrateSTLAlgorithms();
+    demonstrateTemplates();
+    demonstrateRepositoryWithPolymorphism();
+    demonstrateVariant();
+    demonstrateRanges();
+    
+    std::cout << "\n╔══════════════════════════════════════════════════════════╗\n";
+    std::cout << "║   ДЕМОНСТРАЦИЯ ЗАВЕРШЕНА                                 ║\n";
+    std::cout << "╚══════════════════════════════════════════════════════════╝\n";
+    
+    return 0;
+}

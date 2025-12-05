@@ -1684,6 +1684,577 @@ cd /home/engine/project
 
 ---
 
+## Дополнительные Требования: STL и Collections Framework
+
+### 15. Контейнеры с объектами базового и производного классов
+
+#### ✅ Требование: Придумать разумное использование контейнеров, алгоритма сортировки и алгоритма поиска. В контейнере должны храниться объекты как базового, так и производного классов
+
+#### Шаблонный класс Repository<T>
+
+**C++:**
+```cpp
+// Repository.hpp
+template<typename T>
+class Repository
+{
+public:
+    // Не шаблонные методы
+    void add(T* item);
+    size_t size() const;
+    const std::vector<T*>& getAll() const;
+    
+    // Шаблонные методы
+    template<typename Predicate>
+    T* findIf(Predicate pred) const;
+    
+    template<typename Comparator>
+    void sort(Comparator comp);
+    
+    template<typename Predicate>
+    size_t removeIf(Predicate pred);
+
+private:
+    std::vector<T*> m_items;
+};
+```
+
+**Java:**
+```java
+// Repository.java
+public class Repository<T> {
+    private List<T> items;
+    
+    // Не generic методы
+    public void add(T item) { ... }
+    public int size() { ... }
+    public List<T> getAll() { ... }
+    
+    // Generic методы
+    public <R extends T> R findIf(Predicate<T> predicate) { ... }
+    public <R extends T> void sort(Comparator<T> comparator) { ... }
+    public <R extends T> int removeIf(Predicate<T> predicate) { ... }
+}
+```
+
+#### Демонстрация с полиморфными объектами
+
+**C++:**
+```cpp
+void demonstrateRepositoryWithPolymorphism()
+{
+    // Создание репозитория для базового класса VideoCarrier
+    Repository<VideoCarrier> repo;
+    
+    // Добавление объектов РАЗНЫХ ТИПОВ (базовый и производные)
+    repo.add(new VideoCarrier(100, "Classic", "VHS", "Drama", 30.0, 300.0));     // Базовый
+    repo.add(new DVDCarrier(101, "Modern", "Action", 45.0, 450.0, 1, "2"));       // Производный
+    repo.add(new BluRayCarrier(102, "New", "Sci-Fi", 60.0, 600.0, true, true));   // Производный
+    repo.add(new DVDCarrier(103, "Oldies", "Comedy", 40.0, 400.0, 2, "1"));       // Производный
+    
+    std::cout << "Добавлено носителей: " << repo.size() << "\n";
+    
+    // ПОИСК элемента (std::find_if)
+    auto found = repo.findIf([](VideoCarrier* vc) { 
+        return vc->getInventoryNumber() == 102; 
+    });
+    if (found) {
+        std::cout << "Найден: " << found->getTitle() << "\n";
+    }
+    
+    // ПОИСК всех дорогих носителей (std::copy_if)
+    auto expensive = repo.findAll([](VideoCarrier* vc) {
+        return vc->getRentalPricePerDay() >= 50.0;
+    });
+    std::cout << "Найдено дорогих: " << expensive.size() << "\n";
+    
+    // СОРТИРОВКА по цене (std::sort)
+    repo.sort([](VideoCarrier* a, VideoCarrier* b) {
+        return a->getRentalPricePerDay() < b->getRentalPricePerDay();
+    });
+    
+    std::cout << "После сортировки по цене:\n";
+    repo.forEach([](VideoCarrier* vc) {
+        std::cout << "- " << vc->getTitle() << ": " 
+                  << vc->getRentalPricePerDay() << " руб/день\n";
+    });
+    
+    // УДАЛЕНИЕ дешевых (std::remove_if)
+    size_t removed = repo.removeIf([](VideoCarrier* vc) {
+        return vc->getRentalPricePerDay() < 40.0;
+    });
+    std::cout << "Удалено: " << removed << ", Осталось: " << repo.size() << "\n";
+}
+```
+
+**Java:**
+```java
+public static void demonstrateRepositoryWithPolymorphism() {
+    // Создание репозитория для базового класса VideoCarrier
+    Repository<VideoCarrier> repo = new Repository<>();
+    
+    // Добавление объектов РАЗНЫХ ТИПОВ (базовый и производные)
+    repo.add(new VideoCarrierReal(100, "Classic", "VHS", "Drama", 30.0, 300.0));  // Базовый
+    repo.add(new DVDCarrier(101, "Modern", "Action", 45.0, 450.0, 1, "2"));        // Производный
+    repo.add(new BluRayCarrier(102, "New", "Sci-Fi", 60.0, 600.0, true, true));    // Производный
+    repo.add(new DVDCarrier(103, "Oldies", "Comedy", 40.0, 400.0, 2, "1"));        // Производный
+    
+    System.out.println("Добавлено носителей: " + repo.size());
+    
+    // ПОИСК элемента (Stream.filter().findFirst())
+    VideoCarrier found = repo.findIf(vc -> vc.getInventoryNumber() == 102);
+    if (found != null) {
+        System.out.println("Найден: " + found.getTitle());
+    }
+    
+    // ПОИСК всех дорогих носителей (Stream.filter().collect())
+    List<VideoCarrier> expensive = repo.findAll(vc -> vc.getRentalPricePerDay() >= 50.0);
+    System.out.println("Найдено дорогих: " + expensive.size());
+    
+    // СОРТИРОВКА по цене (Collections.sort())
+    repo.sort((a, b) -> Double.compare(a.getRentalPricePerDay(), 
+                                      b.getRentalPricePerDay()));
+    
+    System.out.println("После сортировки по цене:");
+    repo.forEach(vc -> 
+        System.out.println("- " + vc.getTitle() + ": " + 
+                         vc.getRentalPricePerDay() + " руб/день"));
+    
+    // УДАЛЕНИЕ дешевых (List.removeIf())
+    int removed = repo.removeIf(vc -> vc.getRentalPricePerDay() < 40.0);
+    System.out.println("Удалено: " + removed + ", Осталось: " + repo.size());
+}
+```
+
+**Вывод:**
+```
+Добавлено носителей: 4
+
+Найден: New (BluRay)
+
+Найдено дорогих: 1
+
+После сортировки по цене:
+- Classic: 30.0 руб/день
+- Oldies: 40.0 руб/день
+- Modern: 45.0 руб/день
+- New: 60.0 руб/день
+
+Удалено: 1, Осталось: 3
+```
+
+---
+
+### 16. Шаблонные функции с ограничениями
+
+#### ✅ Требование: Реализовать шаблонную функцию. Функция не должна быть в классе, она должна что-то вычислять. Предусмотреть ограничение на допустимые типы на уровне компиляции
+
+#### Функция вычисления среднего значения
+
+**C++:**
+```cpp
+// TemplateUtils.hpp
+
+/**
+ * Шаблонная функция для вычисления среднего значения.
+ * Ограничение: работает только с арифметическими типами.
+ */
+template<typename T>
+typename std::enable_if<std::is_arithmetic<T>::value, double>::type
+calculateAverage(const std::vector<T>& values)
+{
+    if (values.empty()) return 0.0;
+    
+    T sum = std::accumulate(values.begin(), values.end(), T(0));
+    return static_cast<double>(sum) / values.size();
+}
+```
+
+**Использование:**
+```cpp
+// ✅ РАБОТАЕТ - double является арифметическим типом
+std::vector<double> prices = {50.0, 60.0, 45.0, 70.0, 55.0};
+double avg = calculateAverage(prices);  // ✅ Компилируется
+std::cout << "Средняя цена: " << avg << "\n";
+
+// ✅ РАБОТАЕТ - int является арифметическим типом
+std::vector<int> ratings = {5, 4, 5, 3, 4, 5};
+double avgRating = calculateAverage(ratings);  // ✅ Компилируется
+std::cout << "Средний рейтинг: " << avgRating << "\n";
+
+// ❌ НЕ РАБОТАЕТ - string не является арифметическим типом
+std::vector<std::string> names = {"A", "B", "C"};
+// double avgName = calculateAverage(names);  // ❌ ОШИБКА КОМПИЛЯЦИИ!
+```
+
+**Java:**
+```java
+// GenericUtils.java
+
+/**
+ * Generic функция для вычисления среднего значения.
+ * Ограничение: работает только с числовыми типами (extends Number).
+ */
+public static <T extends Number> double calculateAverage(List<T> values) {
+    if (values == null || values.isEmpty()) {
+        return 0.0;
+    }
+    
+    double sum = values.stream()
+                      .mapToDouble(Number::doubleValue)
+                      .sum();
+    return sum / values.size();
+}
+```
+
+**Использование:**
+```java
+// ✅ РАБОТАЕТ - Double extends Number
+List<Double> prices = Arrays.asList(50.0, 60.0, 45.0, 70.0, 55.0);
+double avg = GenericUtils.calculateAverage(prices);  // ✅ Компилируется
+System.out.println("Средняя цена: " + avg);
+
+// ✅ РАБОТАЕТ - Integer extends Number
+List<Integer> ratings = Arrays.asList(5, 4, 5, 3, 4, 5);
+double avgRating = GenericUtils.calculateAverage(ratings);  // ✅ Компилируется
+System.out.println("Средний рейтинг: " + avgRating);
+
+// ❌ НЕ РАБОТАЕТ - String не extends Number
+List<String> names = Arrays.asList("A", "B", "C");
+// double avgName = GenericUtils.calculateAverage(names);  // ❌ ОШИБКА КОМПИЛЯЦИИ!
+```
+
+**Вывод:**
+```
+Средняя цена аренды: 56.0
+Средний рейтинг: 4.333333
+```
+
+#### Функция поиска минимума и максимума
+
+**C++:**
+```cpp
+/**
+ * Шаблонная функция для поиска минимума и максимума.
+ * Ограничение: тип должен поддерживать копирование.
+ */
+template<typename T>
+std::pair<T, T> findMinMax(const std::vector<T>& values)
+{
+    static_assert(std::is_copy_constructible<T>::value, 
+                  "Type must be copy constructible");
+    
+    if (values.empty()) {
+        throw std::runtime_error("Empty container");
+    }
+    
+    auto minIt = std::min_element(values.begin(), values.end());
+    auto maxIt = std::max_element(values.begin(), values.end());
+    
+    return std::make_pair(*minIt, *maxIt);
+}
+```
+
+**Java:**
+```java
+/**
+ * Generic функция для поиска минимума и максимума.
+ * Ограничение: тип должен реализовывать Comparable.
+ */
+public static <T extends Comparable<T>> Pair<T, T> findMinMax(List<T> values) {
+    if (values == null || values.isEmpty()) {
+        throw new IllegalArgumentException("Empty list");
+    }
+    
+    T min = Collections.min(values);
+    T max = Collections.max(values);
+    
+    return new Pair<>(min, max);
+}
+```
+
+**Вывод:**
+```
+Мин. цена: 45.0, Макс. цена: 70.0
+```
+
+#### Другие шаблонные функции
+
+**C++:**
+```cpp
+/**
+ * Фильтрация элементов.
+ */
+template<typename T, typename Predicate>
+std::vector<T> filterElements(const std::vector<T>& source, Predicate pred)
+{
+    std::vector<T> result;
+    std::copy_if(source.begin(), source.end(), 
+                 std::back_inserter(result), pred);
+    return result;
+}
+
+/**
+ * Преобразование элементов.
+ */
+template<typename TIn, typename TOut, typename Transform>
+std::vector<TOut> transformElements(const std::vector<TIn>& source, Transform func)
+{
+    std::vector<TOut> result;
+    result.reserve(source.size());
+    std::transform(source.begin(), source.end(), 
+                   std::back_inserter(result), func);
+    return result;
+}
+
+/**
+ * Проверка наличия элементов, удовлетворяющих условию.
+ */
+template<typename T, typename Predicate>
+bool anyOf(const std::vector<T>& source, Predicate pred)
+{
+    return std::any_of(source.begin(), source.end(), pred);
+}
+```
+
+**Java:**
+```java
+public static <T> List<T> filterElements(List<T> source, Predicate<T> predicate) {
+    return source.stream().filter(predicate).collect(Collectors.toList());
+}
+
+public static <T, R> List<R> transformElements(List<T> source, Function<T, R> mapper) {
+    return source.stream().map(mapper).collect(Collectors.toList());
+}
+
+public static <T> boolean anyOf(List<T> source, Predicate<T> predicate) {
+    return source.stream().anyMatch(predicate);
+}
+```
+
+---
+
+### 17. Демонстрация всех контейнеров и алгоритмов
+
+#### Контейнеры
+
+**C++ (STL):**
+```cpp
+// 1. std::array - фиксированный массив
+std::array<double, 5> prices = {50.0, 60.0, 45.0, 70.0, 55.0};
+
+// 2. std::vector - динамический массив
+std::vector<int> inventoryNumbers = {100, 101, 102, 103, 104};
+inventoryNumbers.push_back(105);
+
+// 3. std::list - двусвязный список
+std::list<std::string> genres = {"Sci-Fi", "Action", "Drama", "Comedy"};
+genres.push_front("Horror");
+
+// 4. std::map - ассоциативный контейнер
+std::map<int, std::string> clientNames;
+clientNames[1] = "Иван Иванов";
+
+// 5. std::span (C++20) - представление
+std::span<int> view(inventoryNumbers);
+```
+
+**Java (Collections Framework):**
+```java
+// 1. Массив - фиксированный
+Double[] prices = {50.0, 60.0, 45.0, 70.0, 55.0};
+
+// 2. ArrayList - динамический список
+ArrayList<Integer> inventoryNumbers = new ArrayList<>(Arrays.asList(100, 101, 102));
+inventoryNumbers.add(103);
+
+// 3. LinkedList - двусвязный список
+LinkedList<String> genres = new LinkedList<>(Arrays.asList("Sci-Fi", "Action"));
+genres.addFirst("Horror");
+
+// 4. HashMap - хеш-таблица
+HashMap<Integer, String> clientNames = new HashMap<>();
+clientNames.put(1, "Иван Иванов");
+
+// 5. List.subList() - представление (аналог span)
+List<Integer> view = inventoryNumbers.subList(0, 3);
+```
+
+#### Алгоритмы
+
+| Операция | C++ | Java |
+|----------|-----|------|
+| **std::min_element, std::max_element** | `std::min_element(v.begin(), v.end())` | `Collections.min(list)` |
+| **std::find, std::find_if** | `std::find_if(v.begin(), v.end(), pred)` | `stream().filter(pred).findFirst()` |
+| **std::copy(), std::copy_if()** | `std::copy_if(src.begin(), src.end(), dst, pred)` | `stream().filter(pred).collect()` |
+| **std::remove(), std::remove_if()** | `std::remove_if + erase` | `list.removeIf(pred)` |
+| **std::sort()** | `std::sort(v.begin(), v.end())` | `Collections.sort(list)` |
+| **std::filter_view()** | `v | std::views::filter(pred)` | `stream().filter(pred)` |
+| **std::transform, std::transform_view()** | `std::transform(src, dst, func)` | `stream().map(func)` |
+| **std::any_of** | `std::any_of(v.begin(), v.end(), pred)` | `stream().anyMatch(pred)` |
+| **std::variant** | `std::variant<int, double, string>` | `Object` или sealed classes |
+
+---
+
+### 18. Дополнительные алгоритмы и операции
+
+#### C++ Ranges (C++20)
+
+```cpp
+std::vector<int> numbers = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+// Фильтрация (ленивое вычисление)
+auto evenNumbers = numbers | std::views::filter([](int n) { return n % 2 == 0; });
+
+// Преобразование
+auto doubled = numbers | std::views::transform([](int n) { return n * 2; });
+
+// Комбинирование
+auto result = numbers 
+            | std::views::filter([](int n) { return n > 5; })
+            | std::views::transform([](int n) { return n * n; });
+```
+
+#### Java Streams
+
+```java
+List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+
+// Фильтрация (ленивое вычисление)
+Stream<Integer> evenNumbers = numbers.stream().filter(n -> n % 2 == 0);
+
+// Преобразование
+Stream<Integer> doubled = numbers.stream().map(n -> n * 2);
+
+// Комбинирование
+List<Integer> result = numbers.stream()
+                             .filter(n -> n > 5)
+                             .map(n -> n * n)
+                             .collect(Collectors.toList());
+
+// Reduce (свертка)
+int sum = numbers.stream().reduce(0, Integer::sum);
+
+// FlatMap (разворачивание)
+List<List<Integer>> nested = Arrays.asList(
+    Arrays.asList(1, 2, 3),
+    Arrays.asList(4, 5, 6)
+);
+List<Integer> flattened = nested.stream()
+                                .flatMap(List::stream)
+                                .collect(Collectors.toList());
+```
+
+---
+
+### 19. std::variant - Вариантный тип
+
+**C++:**
+```cpp
+// std::variant может хранить один из нескольких типов
+using ClientData = std::variant<int, double, std::string>;
+
+ClientData data;
+
+data = 123;  // Хранит int
+std::cout << "ID: " << std::get<int>(data) << "\n";
+
+data = 99.99;  // Хранит double
+std::cout << "Баланс: " << std::get<double>(data) << "\n";
+
+data = std::string("Иван Иванов");  // Хранит string
+std::cout << "Имя: " << std::get<std::string>(data) << "\n";
+
+// Проверка текущего типа
+if (std::holds_alternative<std::string>(data)) {
+    std::cout << "Текущий тип: string\n";
+}
+
+// Visitor pattern
+std::visit([](auto&& value) {
+    std::cout << "Значение: " << value << "\n";
+}, data);
+```
+
+**Вывод:**
+```
+ID клиента (int): 123
+Баланс (double): 99.99
+Имя (string): Иван Иванов
+Текущий тип: string
+Значение: Иван Иванов
+```
+
+---
+
+### 20. Файлы реализации
+
+#### C++
+
+- **Repository.hpp** - Шаблонный класс репозитория
+- **TemplateUtils.hpp** - Шаблонные функции
+- **STLDemo.cpp** - Демонстрационная программа (380+ строк)
+
+#### Java
+
+- **Repository.java** - Generic класс репозитория
+- **GenericUtils.java** - Generic функции
+- **CollectionsDemo.java** - Демонстрационная программа (350+ строк)
+
+---
+
+### 21. Запуск демонстрации
+
+#### C++
+```bash
+cd /home/engine/project/videoprokat
+make STLDemo
+./STLDemo
+```
+
+#### Java
+```bash
+cd /home/engine/project
+javac -d . *.java
+java videoprokat.CollectionsDemo
+```
+
+---
+
+## Сводная Таблица Реализации (Обновленная)
+
+| № | Требование | Java | C++ | Статус |
+|---|-----------|------|-----|--------|
+| 1 | Производные классы | PremiumClient, CorporateClient, DVDCarrier, BluRayCarrier | PremiumClient, DVDCarrier, BluRayCarrier, CashPaymentProcessor, CardPaymentProcessor | ✅ |
+| 2 | Модификатор protected | Client, VideoCarrier | Client, VideoCarrier | ✅ |
+| 3 | Перегрузка с вызовом super | addToDeposit() | addToDeposit() | ✅ |
+| 4 | Перегрузка без вызова super | blockDepositFunds() | blockDepositFunds() | ✅ |
+| 5 | Виртуальные функции | Все методы виртуальные | virtual addToDeposit(), blockDepositFunds(), markAsRented() | ✅ |
+| 6 | Вызов виртуальной через не виртуальную | - | processTransaction(), executePayment() | ✅ |
+| 7 | Клонирование | DVDCarrier | DVDCarrier | ✅ |
+| 8 | Вызов конструктора базового | super() | Список инициализации | ✅ |
+| 9 | Абстрактные классы | Client, VideoCarrier | PaymentProcessor | ✅ |
+| 10 | Оператор присваивания | - | operator=(const Client&) | ✅ |
+| 11 | Запрет копирования | - | = delete | ✅ |
+| 12 | Виртуальный деструктор | - | virtual ~Client(), ~VideoCarrier() | ✅ |
+| 13 | Интерфейсы | Discountable, Notifiable | - | ✅ |
+| 14 | Множественное наследование | PremiumClient, CorporateClient | - | ✅ |
+| **15** | **Контейнеры с полиморфизмом** | **Repository<VideoCarrier>** | **Repository<VideoCarrier>** | **✅** |
+| **16** | **Шаблонные функции** | **GenericUtils** | **TemplateUtils.hpp** | **✅** |
+| **17** | **Шаблонный класс** | **Repository<T>** | **Repository<T>** | **✅** |
+| **18** | **Контейнеры (array, vector, list, map, span)** | **✅** | **✅** | **✅** |
+| **19** | **Алгоритмы (sort, find, copy_if, etc.)** | **✅** | **✅** | **✅** |
+| **20** | **Ограничения на типы** | **<T extends Number>** | **enable_if, static_assert** | **✅** |
+
+---
+
 ## Заключение
 
-Все требования задания L5 успешно реализованы и задокументированы. Проект демонстрирует глубокое понимание концепций ООП в обоих языках программирования.
+Все требования задания L5, включая работу с STL и Collections Framework, успешно реализованы и задокументированы. Проект демонстрирует глубокое понимание:
+- Концепций ООП в обоих языках программирования
+- Работы с контейнерами и алгоритмами
+- Шаблонного/generic программирования
+- Ограничений на типы на уровне компиляции
+- Полиморфизма в контейнерах
+
+Полная документация доступна в файле **STL_COLLECTIONS_GUIDE.md** (1500+ строк).

@@ -13,6 +13,7 @@
 # C++ builds
 videoprokat/InheritanceDemo
 videoprokat/videoprokat
+videoprokat/STLDemo
 videoprokat/*.exe
 
 # IDE
