@@ -1633,6 +1633,297 @@ public class CSharpTemplateClass
 
 ---
 
+---
+
+# Производные классы и полиморфизм
+
+## Требование: Использование производных классов в контейнерах
+
+### Назначение производных классов
+
+В проекте видеопроката необходимы различные типы клиентов с разными привилегиями и скидками, а также различные типы видеоносителей с разными характеристиками.
+
+### Java: Производные классы Client
+
+#### 1. PremiumClient - Премиальный клиент
+
+**Назначение**: Клиент с системой лояльности, скидками и предпочтениями в уведомлениях.
+
+**Характеристики**:
+- Расширяет ClientReal
+- Реализует интерфейсы Discountable и Notifiable
+- Имеет собственные методы для работы с баллами лояльности
+
+**Пример использования в контейнере**:
+
+```java
+// Создание списка различных типов клиентов
+List<Client> clients = new ArrayList<>();
+clients.add(new ClientReal(1, "John", "Doe", "+1-111-1111"));
+clients.add(new PremiumClient(2, "Jane", "Smith", "+1-222-2222", "jane@example.com", 15.0));
+clients.add(new CorporateClient(3, "Bob", "Johnson", "+1-333-3333", "TechCorp", "12345", 150));
+clients.add(new StudentClient(4, "Alice", "Brown", "+1-444-4444", "State University", "STU123", "CS", "alice@uni.edu"));
+clients.add(new VIPClient(5, "David", "Wilson", "+1-555-5555", "platinum", "david@example.com", "John Manager"));
+
+// Применение скидок для клиентов, которые их поддерживают
+System.out.println("=== Применение скидок ===");
+for (Client client : clients) {
+    if (client instanceof Discountable) {
+        Discountable discountableClient = (Discountable) client;
+        double originalPrice = 100.0;
+        double discountedPrice = discountableClient.applyDiscount(originalPrice);
+        System.out.printf("%s: $%.2f -> $%.2f (%.1f%% скидка)%n",
+            client.getFirstName(),
+            originalPrice,
+            discountedPrice,
+            discountableClient.getDiscountPercentage());
+    }
+}
+
+// Отправка уведомлений для клиентов, которые их поддерживают
+System.out.println("\n=== Отправка уведомлений ===");
+for (Client client : clients) {
+    if (client instanceof Notifiable) {
+        Notifiable notifiableClient = (Notifiable) client;
+        notifiableClient.sendNotification("Добро пожаловать в видеопрокат! Используйте код WELCOME для получения скидки.");
+    }
+}
+
+// Сортировка по типу клиента
+System.out.println("\n=== Сортировка по типу ===");
+List<Client> premiumClients = new ArrayList<>();
+for (Client client : clients) {
+    if (client instanceof Discountable) {
+        premiumClients.add(client);
+    }
+}
+System.out.println("Премиальные клиенты: " + premiumClients.size());
+
+// Поиск премиального клиента по скидке
+System.out.println("\n=== Поиск клиента с максимальной скидкой ===");
+Client maxDiscountClient = null;
+double maxDiscount = 0.0;
+for (Client client : clients) {
+    if (client instanceof Discountable) {
+        double discount = ((Discountable) client).getDiscountPercentage();
+        if (discount > maxDiscount) {
+            maxDiscount = discount;
+            maxDiscountClient = client;
+        }
+    }
+}
+if (maxDiscountClient != null) {
+    System.out.println("Клиент с максимальной скидкой: " + maxDiscountClient.getFirstName() + 
+                       " (скидка: " + maxDiscount + "%)");
+}
+
+// Копирование премиальных клиентов в новый список
+System.out.println("\n=== Копирование премиальных клиентов (Stream API) ===");
+List<Client> vipClientsList = clients.stream()
+    .filter(c -> c instanceof PremiumClient || c instanceof VIPClient)
+    .collect(Collectors.toList());
+System.out.println("ВИП клиентов: " + vipClientsList.size());
+for (Client vip : vipClientsList) {
+    System.out.println("  - " + vip.getFirstName() + " " + vip.getLastName());
+}
+```
+
+#### 2. CorporateClient - Корпоративный клиент
+
+**Назначение**: Клиент от компании с корпоративными скидками.
+
+**Характеристики**:
+- Расширяет ClientReal
+- Реализует интерфейс Discountable
+- Скидка зависит от размера компании
+
+#### 3. StudentClient - Студентский клиент
+
+**Назначение**: Студент с льготными скидками и валидацией.
+
+**Характеристики**:
+- Расширяет ClientReal
+- Реализует интерфейсы Discountable и Notifiable
+- Скидка может быть отозвана при потере статуса студента
+
+#### 4. VIPClient - ВИП клиент
+
+**Назначение**: Премиальный ВИП клиент с максимальными привилегиями.
+
+**Характеристики**:
+- Расширяет ClientReal
+- Реализует интерфейсы Discountable и Notifiable
+- Имеет уровни (platinum, gold, silver)
+- Накопление кэшбека
+
+### Java: Производные классы VideoCarrier
+
+#### PremiumVideoCarrier - Премиальный видеоноситель
+
+**Назначение**: Видеоноситель в формате 4K/Ultra HD с особыми характеристиками.
+
+**Пример использования в контейнере**:
+
+```java
+// Создание каталога с различными видеоносителями
+List<VideoCarrier> catalog = new ArrayList<>();
+catalog.add(new VideoCarrierReal(1, "Matrix", "DVD", "Sci-Fi", 50.0, 500.0));
+catalog.add(new VideoCarrierReal(2, "Avatar", "BluRay", "Fantasy", 60.0, 600.0));
+catalog.add(new PremiumVideoCarrier(3, "Dune 4K", "BluRay", "Sci-Fi", 80.0, 800.0, "4K Ultra HD", "Dolby Vision, HDR10, Atmos Sound"));
+catalog.add(new VideoCarrierReal(4, "Inception", "DVD", "Sci-Fi", 55.0, 550.0));
+catalog.add(new PremiumVideoCarrier(5, "Blade Runner 2049", "BluRay", "Sci-Fi", 85.0, 850.0, "4K Ultra HD", "Award-winning cinematography, Dolby Vision"));
+
+// Поиск премиальных видео
+System.out.println("=== Поиск премиальных видео ===");
+List<VideoCarrier> premiumVideos = catalog.stream()
+    .filter(v -> v instanceof PremiumVideoCarrier)
+    .collect(Collectors.toList());
+System.out.println("Премиальных видео: " + premiumVideos.size());
+
+// Сортировка по цене
+System.out.println("\n=== Сортировка по цене аренды ===");
+List<VideoCarrier> sortedByPrice = new ArrayList<>(catalog);
+Collections.sort(sortedByPrice, Comparator.comparingDouble(VideoCarrier::getRentalPricePerDay));
+for (VideoCarrier video : sortedByPrice) {
+    String type = video instanceof PremiumVideoCarrier ? "[PREMIUM]" : "[STANDARD]";
+    System.out.printf("%s %s - $%.2f/day%n", type, video.getTitle(), video.getRentalPricePerDay());
+}
+
+// Фильтрация по типу и жанру
+System.out.println("\n=== Фильтрация: Sci-Fi видео дороже $60 ===");
+List<VideoCarrier> expensiveSciFi = catalog.stream()
+    .filter(v -> "Sci-Fi".equals(v.getGenre()))
+    .filter(v -> v.getRentalPricePerDay() > 60.0)
+    .collect(Collectors.toList());
+for (VideoCarrier video : expensiveSciFi) {
+    System.out.println("  - " + video.getTitle() + " ($" + video.getRentalPricePerDay() + "/day)");
+}
+
+// min/max элементы
+System.out.println("\n=== Минимум и максимум ===");
+VideoCarrier cheapest = Collections.min(catalog, Comparator.comparingDouble(VideoCarrier::getRentalPricePerDay));
+VideoCarrier expensive = Collections.max(catalog, Comparator.comparingDouble(VideoCarrier::getRentalPricePerDay));
+System.out.println("Самое дешевое: " + cheapest.getTitle());
+System.out.println("Самое дорогое: " + expensive.getTitle());
+
+// any_of - есть ли дорогое видео
+System.out.println("\n=== Проверка наличия дорогого видео ===");
+boolean hasExpensiveVideo = catalog.stream().anyMatch(v -> v.getRentalPricePerDay() > 80.0);
+System.out.println("Есть видео дороже $80: " + hasExpensiveVideo);
+```
+
+### C++ эквивалент с STL
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <memory>
+
+// Различные типы клиентов
+class ClientBase {
+public:
+    virtual ~ClientBase() = default;
+    virtual std::string getName() const = 0;
+    virtual double getDiscount() const = 0;
+};
+
+class RegularClient : public ClientBase {
+private:
+    std::string name;
+public:
+    RegularClient(const std::string& n) : name(n) {}
+    std::string getName() const override { return name; }
+    double getDiscount() const override { return 0.0; }
+};
+
+class PremiumClientCpp : public ClientBase {
+private:
+    std::string name;
+    double discount;
+public:
+    PremiumClientCpp(const std::string& n, double d) : name(n), discount(d) {}
+    std::string getName() const override { return name; }
+    double getDiscount() const override { return discount; }
+};
+
+void demonstrateDerivedClassesWithSTL() {
+    std::cout << "=== STL: Производные классы в контейнерах ===" << std::endl;
+
+    // std::vector указателей на базовый класс
+    std::vector<std::unique_ptr<ClientBase>> clients;
+    clients.push_back(std::make_unique<RegularClient>("John Doe"));
+    clients.push_back(std::make_unique<PremiumClientCpp>("Jane Smith", 15.0));
+    clients.push_back(std::make_unique<RegularClient>("Bob Johnson"));
+    clients.push_back(std::make_unique<PremiumClientCpp>("Alice Brown", 25.0));
+
+    // Применение скидок (работает полиморфно)
+    std::cout << "\n--- Применение скидок ---" << std::endl;
+    for (const auto& client : clients) {
+        std::cout << client->getName() << ": $" 
+                  << (100.0 * (1.0 - client->getDiscount() / 100.0)) 
+                  << " (скидка " << client->getDiscount() << "%)" << std::endl;
+    }
+
+    // std::find_if - найти первого премиального клиента
+    std::cout << "\n--- Поиск премиального клиента ---" << std::endl;
+    auto premiumClient = std::find_if(clients.begin(), clients.end(),
+        [](const std::unique_ptr<ClientBase>& c) { return c->getDiscount() > 0.0; }
+    );
+    if (premiumClient != clients.end()) {
+        std::cout << "Найден: " << (*premiumClient)->getName() << std::endl;
+    }
+
+    // std::copy_if - копировать всех премиальных клиентов
+    std::cout << "\n--- Копирование премиальных клиентов ---" << std::endl;
+    std::vector<std::string> premiumNames;
+    for (const auto& client : clients) {
+        if (client->getDiscount() > 0.0) {
+            premiumNames.push_back(client->getName());
+        }
+    }
+    for (const auto& name : premiumNames) {
+        std::cout << "  - " << name << std::endl;
+    }
+
+    // std::max_element - найти клиента с максимальной скидкой
+    std::cout << "\n--- Максимальная скидка ---" << std::endl;
+    auto maxClient = std::max_element(clients.begin(), clients.end(),
+        [](const std::unique_ptr<ClientBase>& a, const std::unique_ptr<ClientBase>& b) {
+            return a->getDiscount() < b->getDiscount();
+        }
+    );
+    if (maxClient != clients.end()) {
+        std::cout << "Клиент с максимальной скидкой: " << (*maxClient)->getName() 
+                  << " (" << (*maxClient)->getDiscount() << "%)" << std::endl;
+    }
+
+    // std::sort - сортировка по скидке
+    std::cout << "\n--- Сортировка по скидке ---" << std::endl;
+    std::vector<ClientBase*> sortedClients;
+    for (auto& client : clients) {
+        sortedClients.push_back(client.get());
+    }
+    std::sort(sortedClients.begin(), sortedClients.end(),
+        [](ClientBase* a, ClientBase* b) {
+            return a->getDiscount() < b->getDiscount();
+        }
+    );
+    for (const auto& client : sortedClients) {
+        std::cout << "  " << client->getName() << " - " << client->getDiscount() << "% скидка" << std::endl;
+    }
+
+    // std::any_of - есть ли скидка больше 20%
+    std::cout << "\n--- Проверка: есть ли скидка > 20% ---" << std::endl;
+    bool hasHighDiscount = std::any_of(clients.begin(), clients.end(),
+        [](const std::unique_ptr<ClientBase>& c) { return c->getDiscount() > 20.0; }
+    );
+    std::cout << "Есть скидка > 20%: " << (hasHighDiscount ? "ДА" : "НЕТ") << std::endl;
+}
+```
+
+---
+
 # Заключение
 
 В этом документе продемонстрированы:
@@ -1641,6 +1932,7 @@ public class CSharpTemplateClass
    - Использование различных контейнеров (array, vector/ArrayList, list/LinkedList, map/HashMap)
    - Сортировка, поиск, копирование и удаление элементов
    - Работа с полиморфизмом в контейнерах
+   - Использование производных классов в контейнерах базовых типов
 
 2. **Шаблонные функции**
    - Ограничения типов на уровне компиляции (concepts в C++, bounds в Java/C#)
@@ -1652,7 +1944,13 @@ public class CSharpTemplateClass
    - Работа с наследованием и полиморфизмом
    - CRUD операции в обобщенной коллекции
 
+4. **Производные классы и полиморфизм**
+   - Множество производных классов (PremiumClient, CorporateClient, StudentClient, VIPClient, PremiumVideoCarrier)
+   - Реализация интерфейсов (Discountable, Notifiable)
+   - Хранение производных объектов в контейнерах базовых типов
+   - Полиморфное использование объектов через базовые типы
+
 Все примеры демонстрируют лучшие практики для каждого языка:
-- **C++**: использование STL, концепций (C++20) и умных указателей
-- **Java**: использование Collections Framework и Stream API
-- **C#**: использование LINQ и обобщенных типов
+- **C++**: использование STL, концепций (C++20), умных указателей и полиморфизма
+- **Java**: использование Collections Framework, Stream API, интерфейсов и наследования
+- **C#**: использование LINQ, обобщенных типов и полиморфизма
