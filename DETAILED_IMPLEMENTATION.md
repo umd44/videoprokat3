@@ -2248,6 +2248,1188 @@ java videoprokat.CollectionsDemo
 
 ---
 
+## Детальная Реализация STL Контейнеров и Методов
+
+### Контейнеры STL (C++) и их аналоги в Java
+
+#### 1. std::array ↔ Массив (Java)
+
+**Описание:** Фиксированный массив с размером, определенным на этапе компиляции.
+
+**C++ (std::array):**
+```cpp
+// Файл: videoprokat/STLDemo.cpp.example
+#include <array>
+
+void demonstrateSTLContainers()
+{
+    // std::array - массив фиксированного размера
+    std::array<double, 5> prices = {50.0, 60.0, 45.0, 70.0, 55.0};
+    
+    std::cout << "std::array - фиксированный массив:\n";
+    std::cout << "   Цены аренды: ";
+    for (const auto& price : prices) {
+        std::cout << price << " ";
+    }
+    std::cout << "\n";
+    std::cout << "   Размер: " << prices.size() << "\n";
+    std::cout << "   Элемент [0]: " << prices[0] << "\n";
+    std::cout << "   Элемент at(2): " << prices.at(2) << "\n";
+}
+```
+
+**Java (Array):**
+```java
+// Файл: CollectionsDemo.java
+public static void demonstrateCollections() {
+    // Фиксированный массив
+    Double[] prices = {50.0, 60.0, 45.0, 70.0, 55.0};
+    
+    System.out.println("Фиксированный массив:");
+    System.out.println("   Цены: " + Arrays.toString(prices));
+    System.out.println("   Размер: " + prices.length);
+    System.out.println("   Элемент [0]: " + prices[0]);
+    System.out.println("   Элемент [2]: " + prices[2]);
+}
+```
+
+**Вывод:**
+```
+std::array - фиксированный массив:
+   Цены аренды: 50 60 45 70 55
+   Размер: 5
+   Элемент [0]: 50
+   Элемент at(2): 45
+```
+
+**Особенности:**
+- **C++:** `std::array` знает свой размер, безопасный доступ через `.at()`, итераторы
+- **Java:** Обычный массив, доступ через `[]`, размер через `.length`
+
+---
+
+#### 2. std::vector ↔ ArrayList (Java)
+
+**Описание:** Динамический массив с автоматическим изменением размера.
+
+**C++ (std::vector):**
+```cpp
+// Файл: videoprokat/STLDemo.cpp.example
+#include <vector>
+
+void demonstrateSTLContainers()
+{
+    // std::vector - динамический массив
+    std::vector<int> inventoryNumbers = {100, 101, 102, 103, 104};
+    
+    // Добавление элементов
+    inventoryNumbers.push_back(105);
+    inventoryNumbers.push_back(106);
+    
+    std::cout << "std::vector - динамический массив:\n";
+    std::cout << "   Инвентарные номера: ";
+    for (const auto& num : inventoryNumbers) {
+        std::cout << num << " ";
+    }
+    std::cout << "\n";
+    std::cout << "   Размер: " << inventoryNumbers.size() << "\n";
+    std::cout << "   Вместимость: " << inventoryNumbers.capacity() << "\n";
+    
+    // Удаление последнего элемента
+    inventoryNumbers.pop_back();
+    
+    // Доступ к элементам
+    std::cout << "   Первый элемент: " << inventoryNumbers.front() << "\n";
+    std::cout << "   Последний элемент: " << inventoryNumbers.back() << "\n";
+}
+```
+
+**Java (ArrayList):**
+```java
+// Файл: CollectionsDemo.java
+import java.util.ArrayList;
+
+public static void demonstrateCollections() {
+    // ArrayList - динамический список
+    ArrayList<Integer> inventoryNumbers = new ArrayList<>(
+        Arrays.asList(100, 101, 102, 103, 104)
+    );
+    
+    // Добавление элементов
+    inventoryNumbers.add(105);
+    inventoryNumbers.add(106);
+    
+    System.out.println("ArrayList - динамический список:");
+    System.out.println("   Инвентарные номера: " + inventoryNumbers);
+    System.out.println("   Размер: " + inventoryNumbers.size());
+    
+    // Удаление последнего элемента
+    inventoryNumbers.remove(inventoryNumbers.size() - 1);
+    
+    // Доступ к элементам
+    System.out.println("   Первый элемент: " + inventoryNumbers.get(0));
+    System.out.println("   Последний элемент: " + inventoryNumbers.get(inventoryNumbers.size() - 1));
+}
+```
+
+**Вывод:**
+```
+std::vector - динамический массив:
+   Инвентарные номера: 100 101 102 103 104 105 106
+   Размер: 7
+   Вместимость: 10
+   Первый элемент: 100
+   Последний элемент: 105
+```
+
+**Использование в Repository:**
+```cpp
+// Файл: videoprokat/Repository.hpp
+template<typename T>
+class Repository
+{
+private:
+    std::vector<T*> m_items;  // ← Используем std::vector
+};
+```
+
+---
+
+#### 3. std::list ↔ LinkedList (Java)
+
+**Описание:** Двусвязный список с эффективной вставкой/удалением в любом месте.
+
+**C++ (std::list):**
+```cpp
+// Файл: videoprokat/STLDemo.cpp.example
+#include <list>
+
+void demonstrateSTLContainers()
+{
+    // std::list - двусвязный список
+    std::list<std::string> genres = {"Sci-Fi", "Action", "Drama", "Comedy"};
+    
+    // Добавление в начало и конец
+    genres.push_front("Horror");
+    genres.push_back("Fantasy");
+    
+    std::cout << "std::list - двусвязный список:\n";
+    std::cout << "   Жанры: ";
+    for (const auto& genre : genres) {
+        std::cout << genre << " ";
+    }
+    std::cout << "\n";
+    std::cout << "   Размер: " << genres.size() << "\n";
+    
+    // Вставка в середину
+    auto it = genres.begin();
+    std::advance(it, 2);  // Переходим к 3-му элементу
+    genres.insert(it, "Thriller");
+    
+    std::cout << "   После вставки 'Thriller': ";
+    for (const auto& genre : genres) {
+        std::cout << genre << " ";
+    }
+    std::cout << "\n";
+}
+```
+
+**Java (LinkedList):**
+```java
+// Файл: CollectionsDemo.java
+import java.util.LinkedList;
+
+public static void demonstrateCollections() {
+    // LinkedList - двусвязный список
+    LinkedList<String> genres = new LinkedList<>(
+        Arrays.asList("Sci-Fi", "Action", "Drama", "Comedy")
+    );
+    
+    // Добавление в начало и конец
+    genres.addFirst("Horror");
+    genres.addLast("Fantasy");
+    
+    System.out.println("LinkedList - двусвязный список:");
+    System.out.println("   Жанры: " + genres);
+    System.out.println("   Размер: " + genres.size());
+    
+    // Вставка в середину
+    genres.add(2, "Thriller");
+    
+    System.out.println("   После вставки 'Thriller': " + genres);
+}
+```
+
+**Вывод:**
+```
+std::list - двусвязный список:
+   Жанры: Horror Sci-Fi Action Drama Comedy Fantasy
+   Размер: 6
+   После вставки 'Thriller': Horror Sci-Fi Thriller Action Drama Comedy Fantasy
+```
+
+---
+
+#### 4. std::map ↔ HashMap (Java)
+
+**Описание:** Ассоциативный контейнер (словарь) для хранения пар ключ-значение.
+
+**C++ (std::map):**
+```cpp
+// Файл: videoprokat/STLDemo.cpp.example
+#include <map>
+
+void demonstrateSTLContainers()
+{
+    // std::map - упорядоченный ассоциативный контейнер
+    std::map<int, std::string> clientNames;
+    
+    // Добавление элементов
+    clientNames[1] = "Иван Иванов";
+    clientNames[2] = "Петр Петров";
+    clientNames[3] = "Сидор Сидоров";
+    clientNames.insert({4, "Василий Васильев"});
+    
+    std::cout << "std::map - словарь:\n";
+    std::cout << "   Клиенты:\n";
+    for (const auto& [id, name] : clientNames) {
+        std::cout << "   ID " << id << ": " << name << "\n";
+    }
+    
+    // Поиск элемента
+    if (clientNames.find(2) != clientNames.end()) {
+        std::cout << "   Найден клиент ID 2: " << clientNames[2] << "\n";
+    }
+    
+    // Размер
+    std::cout << "   Количество клиентов: " << clientNames.size() << "\n";
+    
+    // Удаление элемента
+    clientNames.erase(3);
+    std::cout << "   После удаления ID 3: " << clientNames.size() << " клиентов\n";
+}
+```
+
+**Java (HashMap):**
+```java
+// Файл: CollectionsDemo.java
+import java.util.HashMap;
+
+public static void demonstrateCollections() {
+    // HashMap - хеш-таблица (неупорядоченная)
+    HashMap<Integer, String> clientNames = new HashMap<>();
+    
+    // Добавление элементов
+    clientNames.put(1, "Иван Иванов");
+    clientNames.put(2, "Петр Петров");
+    clientNames.put(3, "Сидор Сидоров");
+    clientNames.put(4, "Василий Васильев");
+    
+    System.out.println("HashMap - словарь:");
+    System.out.println("   Клиенты:");
+    clientNames.forEach((id, name) -> 
+        System.out.println("   ID " + id + ": " + name)
+    );
+    
+    // Поиск элемента
+    if (clientNames.containsKey(2)) {
+        System.out.println("   Найден клиент ID 2: " + clientNames.get(2));
+    }
+    
+    // Размер
+    System.out.println("   Количество клиентов: " + clientNames.size());
+    
+    // Удаление элемента
+    clientNames.remove(3);
+    System.out.println("   После удаления ID 3: " + clientNames.size() + " клиентов");
+}
+```
+
+**Вывод:**
+```
+std::map - словарь:
+   Клиенты:
+   ID 1: Иван Иванов
+   ID 2: Петр Петров
+   ID 3: Сидор Сидоров
+   ID 4: Василий Васильев
+   Найден клиент ID 2: Петр Петров
+   Количество клиентов: 4
+   После удаления ID 3: 3 клиентов
+```
+
+---
+
+#### 5. std::span (C++20) ↔ List.subList() (Java)
+
+**Описание:** Легковесное представление непрерывной последовательности элементов.
+
+**C++ (std::span):**
+```cpp
+// Файл: videoprokat/STLDemo.cpp.example
+#include <span>  // C++20
+
+void demonstrateSTLContainers()
+{
+    std::vector<int> data = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    
+    // std::span - легковесное представление (не копирует данные)
+    std::span<int> view(data);
+    std::span<int> first5(data.data(), 5);  // Первые 5 элементов
+    
+    std::cout << "std::span - представление:\n";
+    std::cout << "   Полное представление: ";
+    for (int n : view) {
+        std::cout << n << " ";
+    }
+    std::cout << "\n";
+    
+    std::cout << "   Первые 5 элементов: ";
+    for (int n : first5) {
+        std::cout << n << " ";
+    }
+    std::cout << "\n";
+    
+    // Изменение через span меняет оригинальные данные
+    first5[0] = 100;
+    std::cout << "   После изменения первого элемента через span: ";
+    std::cout << data[0] << "\n";  // Выведет 100
+}
+```
+
+**Java (List.subList()):**
+```java
+// Файл: CollectionsDemo.java
+public static void demonstrateCollections() {
+    List<Integer> data = new ArrayList<>(
+        Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+    );
+    
+    // subList - представление части списка (не копирует данные)
+    List<Integer> view = data.subList(0, data.size());
+    List<Integer> first5 = data.subList(0, 5);  // Первые 5 элементов
+    
+    System.out.println("List.subList() - представление:");
+    System.out.println("   Полное представление: " + view);
+    System.out.println("   Первые 5 элементов: " + first5);
+    
+    // Изменение через subList меняет оригинальные данные
+    first5.set(0, 100);
+    System.out.println("   После изменения первого элемента: " + data.get(0));  // Выведет 100
+}
+```
+
+**Вывод:**
+```
+std::span - представление:
+   Полное представление: 1 2 3 4 5 6 7 8 9 10
+   Первые 5 элементов: 1 2 3 4 5
+   После изменения первого элемента через span: 100
+```
+
+---
+
+### Методы STL (C++) и их аналоги в Java
+
+#### 1. std::min_element, std::max_element ↔ Collections.min, Collections.max
+
+**Описание:** Поиск минимального и максимального элемента в контейнере.
+
+**C++:**
+```cpp
+// Файл: videoprokat/STLDemo.cpp.example
+#include <algorithm>
+
+void demonstrateSTLAlgorithms()
+{
+    std::vector<double> prices = {50.0, 60.0, 45.0, 70.0, 55.0, 40.0};
+    
+    // std::min_element - возвращает итератор на минимальный элемент
+    auto minIt = std::min_element(prices.begin(), prices.end());
+    
+    // std::max_element - возвращает итератор на максимальный элемент
+    auto maxIt = std::max_element(prices.begin(), prices.end());
+    
+    std::cout << "Поиск минимума и максимума:\n";
+    std::cout << "   Минимальная цена: " << *minIt << "\n";
+    std::cout << "   Максимальная цена: " << *maxIt << "\n";
+    std::cout << "   Индекс минимума: " << std::distance(prices.begin(), minIt) << "\n";
+    std::cout << "   Индекс максимума: " << std::distance(prices.begin(), maxIt) << "\n";
+}
+```
+
+**Java:**
+```java
+// Файл: CollectionsDemo.java
+import java.util.Collections;
+
+public static void demonstrateStreamOperations() {
+    List<Double> prices = Arrays.asList(50.0, 60.0, 45.0, 70.0, 55.0, 40.0);
+    
+    // Collections.min - возвращает минимальный элемент
+    Double minPrice = Collections.min(prices);
+    
+    // Collections.max - возвращает максимальный элемент
+    Double maxPrice = Collections.max(prices);
+    
+    System.out.println("Поиск минимума и максимума:");
+    System.out.println("   Минимальная цена: " + minPrice);
+    System.out.println("   Максимальная цена: " + maxPrice);
+    System.out.println("   Индекс минимума: " + prices.indexOf(minPrice));
+    System.out.println("   Индекс максимума: " + prices.indexOf(maxPrice));
+}
+```
+
+**Использование в шаблонной функции:**
+```cpp
+// Файл: videoprokat/TemplateUtils.hpp
+template<typename T>
+std::pair<T, T> findMinMax(const std::vector<T>& values)
+{
+    auto minIt = std::min_element(values.begin(), values.end());
+    auto maxIt = std::max_element(values.begin(), values.end());
+    
+    return std::make_pair(*minIt, *maxIt);
+}
+```
+
+**Вывод:**
+```
+Поиск минимума и максимума:
+   Минимальная цена: 40
+   Максимальная цена: 70
+   Индекс минимума: 5
+   Индекс максимума: 3
+```
+
+---
+
+#### 2. std::find, std::find_if ↔ Stream.filter().findFirst()
+
+**Описание:** Поиск элемента в контейнере по значению или условию.
+
+**C++:**
+```cpp
+// Файл: videoprokat/STLDemo.cpp.example
+void demonstrateSTLAlgorithms()
+{
+    std::vector<double> prices = {50.0, 60.0, 45.0, 70.0, 55.0};
+    
+    // std::find - поиск конкретного значения
+    auto findIt = std::find(prices.begin(), prices.end(), 60.0);
+    if (findIt != prices.end()) {
+        std::cout << "std::find - Найдена цена 60.0 на позиции " 
+                  << std::distance(prices.begin(), findIt) << "\n";
+    }
+    
+    // std::find_if - поиск по условию (предикату)
+    auto findIfIt = std::find_if(prices.begin(), prices.end(), 
+                                  [](double p) { return p > 65.0; });
+    if (findIfIt != prices.end()) {
+        std::cout << "std::find_if - Первая цена > 65.0: " << *findIfIt << "\n";
+    }
+    
+    // Поиск с пользовательским компаратором
+    auto findCustom = std::find_if(prices.begin(), prices.end(),
+                                    [](double p) { return p >= 50.0 && p <= 55.0; });
+    if (findCustom != prices.end()) {
+        std::cout << "std::find_if - Цена в диапазоне [50, 55]: " << *findCustom << "\n";
+    }
+}
+```
+
+**Java:**
+```java
+// Файл: CollectionsDemo.java
+public static void demonstrateStreamOperations() {
+    List<Double> prices = Arrays.asList(50.0, 60.0, 45.0, 70.0, 55.0);
+    
+    // Stream.filter().findFirst() - поиск конкретного значения
+    Optional<Double> found = prices.stream()
+                                   .filter(p -> p == 60.0)
+                                   .findFirst();
+    found.ifPresent(p -> 
+        System.out.println("filter().findFirst() - Найдена цена: " + p));
+    
+    // Stream.filter().findFirst() - поиск по условию
+    Optional<Double> foundIf = prices.stream()
+                                     .filter(p -> p > 65.0)
+                                     .findFirst();
+    foundIf.ifPresent(p -> 
+        System.out.println("filter().findFirst() - Первая цена > 65.0: " + p));
+    
+    // Поиск с пользовательским условием
+    Optional<Double> foundCustom = prices.stream()
+                                         .filter(p -> p >= 50.0 && p <= 55.0)
+                                         .findFirst();
+    foundCustom.ifPresent(p -> 
+        System.out.println("filter().findFirst() - Цена в диапазоне [50, 55]: " + p));
+}
+```
+
+**Использование в Repository:**
+```cpp
+// Файл: videoprokat/Repository.hpp
+template<typename T>
+template<typename Predicate>
+T* Repository<T>::findIf(Predicate pred) const
+{
+    auto it = std::find_if(m_items.begin(), m_items.end(), pred);
+    return (it != m_items.end()) ? *it : nullptr;
+}
+```
+
+**Вывод:**
+```
+std::find - Найдена цена 60.0 на позиции 1
+std::find_if - Первая цена > 65.0: 70
+std::find_if - Цена в диапазоне [50, 55]: 50
+```
+
+---
+
+#### 3. std::copy(), std::copy_if() ↔ Stream.filter().collect()
+
+**Описание:** Копирование элементов из одного контейнера в другой с возможностью фильтрации.
+
+**C++:**
+```cpp
+// Файл: videoprokat/STLDemo.cpp.example
+void demonstrateSTLAlgorithms()
+{
+    std::vector<double> prices = {50.0, 60.0, 45.0, 70.0, 55.0, 40.0};
+    
+    // std::copy - копирование всех элементов
+    std::vector<double> allPrices;
+    std::copy(prices.begin(), prices.end(), std::back_inserter(allPrices));
+    
+    std::cout << "std::copy - все элементы: ";
+    for (const auto& p : allPrices) {
+        std::cout << p << " ";
+    }
+    std::cout << "\n";
+    
+    // std::copy_if - копирование с условием
+    std::vector<double> expensivePrices;
+    std::copy_if(prices.begin(), prices.end(), 
+                 std::back_inserter(expensivePrices),
+                 [](double p) { return p >= 55.0; });
+    
+    std::cout << "std::copy_if - дорогие цены (>= 55): ";
+    for (const auto& price : expensivePrices) {
+        std::cout << price << " ";
+    }
+    std::cout << "\n";
+}
+```
+
+**Java:**
+```java
+// Файл: CollectionsDemo.java
+public static void demonstrateStreamOperations() {
+    List<Double> prices = Arrays.asList(50.0, 60.0, 45.0, 70.0, 55.0, 40.0);
+    
+    // Stream.collect() - копирование всех элементов
+    List<Double> allPrices = prices.stream()
+                                   .collect(Collectors.toList());
+    
+    System.out.println("stream().collect() - все элементы: " + allPrices);
+    
+    // Stream.filter().collect() - копирование с условием
+    List<Double> expensivePrices = prices.stream()
+                                        .filter(p -> p >= 55.0)
+                                        .collect(Collectors.toList());
+    
+    System.out.println("filter().collect() - дорогие цены (>= 55): " + expensivePrices);
+}
+```
+
+**Использование в шаблонной функции:**
+```cpp
+// Файл: videoprokat/TemplateUtils.hpp
+template<typename T, typename Predicate>
+std::vector<T> filterElements(const std::vector<T>& source, Predicate pred)
+{
+    std::vector<T> result;
+    std::copy_if(source.begin(), source.end(), 
+                 std::back_inserter(result), pred);
+    return result;
+}
+```
+
+**Вывод:**
+```
+std::copy - все элементы: 50 60 45 70 55 40
+std::copy_if - дорогие цены (>= 55): 60 70 55
+```
+
+---
+
+#### 4. std::remove(), std::remove_if() ↔ List.removeIf()
+
+**Описание:** Удаление элементов из контейнера по значению или условию.
+
+**C++:**
+```cpp
+// Файл: videoprokat/STLDemo.cpp.example
+void demonstrateSTLAlgorithms()
+{
+    std::vector<double> prices = {50.0, 60.0, 45.0, 70.0, 55.0, 40.0};
+    
+    std::cout << "До удаления: ";
+    for (const auto& p : prices) {
+        std::cout << p << " ";
+    }
+    std::cout << "\n";
+    
+    // std::remove_if - перемещает элементы, удовлетворяющие условию, в конец
+    // Возвращает итератор на начало "удаленных" элементов
+    auto newEnd = std::remove_if(prices.begin(), prices.end(),
+                                  [](double p) { return p < 50.0; });
+    
+    // erase - физически удаляет элементы с конца
+    prices.erase(newEnd, prices.end());
+    
+    std::cout << "std::remove_if + erase - После удаления цен < 50: ";
+    for (const auto& price : prices) {
+        std::cout << price << " ";
+    }
+    std::cout << "\n";
+}
+```
+
+**Java:**
+```java
+// Файл: CollectionsDemo.java
+public static void demonstrateStreamOperations() {
+    List<Double> prices = new ArrayList<>(
+        Arrays.asList(50.0, 60.0, 45.0, 70.0, 55.0, 40.0)
+    );
+    
+    System.out.println("До удаления: " + prices);
+    
+    // List.removeIf() - удаляет элементы, удовлетворяющие условию
+    prices.removeIf(p -> p < 50.0);
+    
+    System.out.println("removeIf() - После удаления цен < 50: " + prices);
+}
+```
+
+**Использование в Repository:**
+```cpp
+// Файл: videoprokat/Repository.hpp
+template<typename T>
+template<typename Predicate>
+size_t Repository<T>::removeIf(Predicate pred)
+{
+    auto oldSize = m_items.size();
+    auto newEnd = std::remove_if(m_items.begin(), m_items.end(), pred);
+    m_items.erase(newEnd, m_items.end());
+    return oldSize - m_items.size();
+}
+```
+
+**Вывод:**
+```
+До удаления: 50 60 45 70 55 40
+std::remove_if + erase - После удаления цен < 50: 50 60 70 55
+```
+
+---
+
+#### 5. std::sort() ↔ Collections.sort()
+
+**Описание:** Сортировка элементов контейнера.
+
+**C++:**
+```cpp
+// Файл: videoprokat/STLDemo.cpp.example
+void demonstrateSTLAlgorithms()
+{
+    std::vector<double> prices = {60.0, 40.0, 70.0, 45.0, 55.0};
+    
+    std::cout << "До сортировки: ";
+    for (const auto& p : prices) {
+        std::cout << p << " ";
+    }
+    std::cout << "\n";
+    
+    // std::sort - сортировка по возрастанию (по умолчанию)
+    std::sort(prices.begin(), prices.end());
+    
+    std::cout << "std::sort - После сортировки по возрастанию: ";
+    for (const auto& p : prices) {
+        std::cout << p << " ";
+    }
+    std::cout << "\n";
+    
+    // Сортировка по убыванию с пользовательским компаратором
+    std::sort(prices.begin(), prices.end(), 
+              [](double a, double b) { return a > b; });
+    
+    std::cout << "std::sort - После сортировки по убыванию: ";
+    for (const auto& p : prices) {
+        std::cout << p << " ";
+    }
+    std::cout << "\n";
+}
+```
+
+**Java:**
+```java
+// Файл: CollectionsDemo.java
+public static void demonstrateStreamOperations() {
+    List<Double> prices = new ArrayList<>(
+        Arrays.asList(60.0, 40.0, 70.0, 45.0, 55.0)
+    );
+    
+    System.out.println("До сортировки: " + prices);
+    
+    // Collections.sort() - сортировка по возрастанию (по умолчанию)
+    Collections.sort(prices);
+    
+    System.out.println("Collections.sort() - После сортировки по возрастанию: " + prices);
+    
+    // Сортировка по убыванию с компаратором
+    Collections.sort(prices, (a, b) -> Double.compare(b, a));
+    
+    System.out.println("Collections.sort() - После сортировки по убыванию: " + prices);
+}
+```
+
+**Использование в Repository:**
+```cpp
+// Файл: videoprokat/Repository.hpp
+template<typename T>
+template<typename Comparator>
+void Repository<T>::sort(Comparator comp)
+{
+    std::sort(m_items.begin(), m_items.end(), comp);
+}
+
+// Использование:
+repo.sort([](VideoCarrier* a, VideoCarrier* b) {
+    return a->getRentalPricePerDay() < b->getRentalPricePerDay();
+});
+```
+
+**Вывод:**
+```
+До сортировки: 60 40 70 45 55
+std::sort - После сортировки по возрастанию: 40 45 55 60 70
+std::sort - После сортировки по убыванию: 70 60 55 45 40
+```
+
+---
+
+#### 6. std::filter_view() (C++20 Ranges) ↔ Stream.filter()
+
+**Описание:** Ленивая фильтрация элементов без создания промежуточных копий.
+
+**C++:**
+```cpp
+// Файл: videoprokat/STLDemo.cpp.example
+#include <ranges>  // C++20
+
+void demonstrateRanges()
+{
+    std::vector<int> numbers = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    
+    // std::views::filter - ленивая фильтрация (не создает копию)
+    auto evenNumbers = numbers | std::views::filter([](int n) { return n % 2 == 0; });
+    
+    std::cout << "std::views::filter - Четные числа: ";
+    for (int n : evenNumbers) {
+        std::cout << n << " ";
+    }
+    std::cout << "\n";
+    
+    // Можно комбинировать несколько фильтров
+    auto filtered = numbers 
+                  | std::views::filter([](int n) { return n > 3; })
+                  | std::views::filter([](int n) { return n < 8; });
+    
+    std::cout << "Комбинированные фильтры (> 3 и < 8): ";
+    for (int n : filtered) {
+        std::cout << n << " ";
+    }
+    std::cout << "\n";
+}
+```
+
+**Альтернатива для C++17 (без ranges):**
+```cpp
+// Файл: videoprokat/STLDemo.cpp.example
+void demonstrateRanges()
+{
+    std::vector<int> numbers = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    
+    // Альтернатива без ranges - создается копия
+    std::vector<int> evenNumbers;
+    std::copy_if(numbers.begin(), numbers.end(), 
+                 std::back_inserter(evenNumbers),
+                 [](int n) { return n % 2 == 0; });
+    
+    std::cout << "std::copy_if - Четные числа: ";
+    for (int n : evenNumbers) {
+        std::cout << n << " ";
+    }
+    std::cout << "\n";
+}
+```
+
+**Java:**
+```java
+// Файл: CollectionsDemo.java
+public static void demonstrateAdvancedStreams() {
+    List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+    
+    // Stream.filter() - ленивая фильтрация (не создает копию до вызова collect)
+    List<Integer> evenNumbers = numbers.stream()
+                                      .filter(n -> n % 2 == 0)
+                                      .collect(Collectors.toList());
+    
+    System.out.println("Stream.filter() - Четные числа: " + evenNumbers);
+    
+    // Можно комбинировать несколько фильтров
+    List<Integer> filtered = numbers.stream()
+                                   .filter(n -> n > 3)
+                                   .filter(n -> n < 8)
+                                   .collect(Collectors.toList());
+    
+    System.out.println("Комбинированные фильтры (> 3 и < 8): " + filtered);
+}
+```
+
+**Вывод:**
+```
+std::views::filter - Четные числа: 2 4 6 8 10
+Комбинированные фильтры (> 3 и < 8): 4 5 6 7
+```
+
+---
+
+#### 7. std::transform, std::transform_view() ↔ Stream.map()
+
+**Описание:** Преобразование каждого элемента контейнера с помощью функции.
+
+**C++:**
+```cpp
+// Файл: videoprokat/STLDemo.cpp.example
+void demonstrateSTLAlgorithms()
+{
+    std::vector<double> prices = {50.0, 60.0, 45.0, 70.0, 55.0};
+    
+    // std::transform - преобразование элементов
+    std::vector<double> discounted;
+    std::transform(prices.begin(), prices.end(), 
+                   std::back_inserter(discounted),
+                   [](double p) { return p * 0.9; });  // Скидка 10%
+    
+    std::cout << "std::transform - Цены со скидкой 10%: ";
+    for (const auto& price : discounted) {
+        std::cout << price << " ";
+    }
+    std::cout << "\n";
+    
+    // Преобразование in-place
+    std::transform(prices.begin(), prices.end(), prices.begin(),
+                   [](double p) { return p * 1.1; });  // Увеличение на 10%
+    
+    std::cout << "std::transform in-place - Цены после увеличения: ";
+    for (const auto& p : prices) {
+        std::cout << p << " ";
+    }
+    std::cout << "\n";
+}
+```
+
+**C++ Ranges:**
+```cpp
+// std::views::transform - ленивое преобразование
+auto doubled = numbers | std::views::transform([](int n) { return n * 2; });
+```
+
+**Java:**
+```java
+// Файл: CollectionsDemo.java
+public static void demonstrateStreamOperations() {
+    List<Double> prices = Arrays.asList(50.0, 60.0, 45.0, 70.0, 55.0);
+    
+    // Stream.map() - преобразование элементов
+    List<Double> discounted = prices.stream()
+                                   .map(p -> p * 0.9)  // Скидка 10%
+                                   .collect(Collectors.toList());
+    
+    System.out.println("Stream.map() - Цены со скидкой 10%: " + discounted);
+    
+    // Преобразование типов
+    List<String> priceStrings = prices.stream()
+                                     .map(p -> String.format("%.2f руб", p))
+                                     .collect(Collectors.toList());
+    
+    System.out.println("Stream.map() - Цены как строки: " + priceStrings);
+}
+```
+
+**Использование в шаблонной функции:**
+```cpp
+// Файл: videoprokat/TemplateUtils.hpp
+template<typename TIn, typename TOut, typename Transform>
+std::vector<TOut> transformElements(const std::vector<TIn>& source, Transform func)
+{
+    std::vector<TOut> result;
+    result.reserve(source.size());
+    std::transform(source.begin(), source.end(), 
+                   std::back_inserter(result), func);
+    return result;
+}
+```
+
+**Вывод:**
+```
+std::transform - Цены со скидкой 10%: 45 54 40.5 63 49.5
+std::transform in-place - Цены после увеличения: 55 66 49.5 77 60.5
+```
+
+---
+
+#### 8. std::any_of ↔ Stream.anyMatch()
+
+**Описание:** Проверка, что хотя бы один элемент удовлетворяет условию.
+
+**C++:**
+```cpp
+// Файл: videoprokat/STLDemo.cpp.example
+void demonstrateSTLAlgorithms()
+{
+    std::vector<double> prices = {50.0, 60.0, 45.0, 70.0, 55.0};
+    
+    // std::any_of - проверка наличия хотя бы одного элемента
+    bool hasExpensive = std::any_of(prices.begin(), prices.end(),
+                                    [](double p) { return p > 65.0; });
+    
+    std::cout << "std::any_of - Есть цены > 65: " 
+              << (hasExpensive ? "Да" : "Нет") << "\n";
+    
+    // std::all_of - проверка, что все элементы удовлетворяют условию
+    bool allPositive = std::all_of(prices.begin(), prices.end(),
+                                   [](double p) { return p > 0; });
+    
+    std::cout << "std::all_of - Все цены положительные: " 
+              << (allPositive ? "Да" : "Нет") << "\n";
+    
+    // std::none_of - проверка, что ни один элемент не удовлетворяет условию
+    bool noneNegative = std::none_of(prices.begin(), prices.end(),
+                                     [](double p) { return p < 0; });
+    
+    std::cout << "std::none_of - Нет отрицательных цен: " 
+              << (noneNegative ? "Да" : "Нет") << "\n";
+}
+```
+
+**Java:**
+```java
+// Файл: CollectionsDemo.java
+public static void demonstrateStreamOperations() {
+    List<Double> prices = Arrays.asList(50.0, 60.0, 45.0, 70.0, 55.0);
+    
+    // Stream.anyMatch() - проверка наличия хотя бы одного элемента
+    boolean hasExpensive = prices.stream()
+                                .anyMatch(p -> p > 65.0);
+    
+    System.out.println("Stream.anyMatch() - Есть цены > 65: " + 
+                      (hasExpensive ? "Да" : "Нет"));
+    
+    // Stream.allMatch() - проверка, что все элементы удовлетворяют условию
+    boolean allPositive = prices.stream()
+                               .allMatch(p -> p > 0);
+    
+    System.out.println("Stream.allMatch() - Все цены положительные: " + 
+                      (allPositive ? "Да" : "Нет"));
+    
+    // Stream.noneMatch() - проверка, что ни один элемент не удовлетворяет условию
+    boolean noneNegative = prices.stream()
+                                .noneMatch(p -> p < 0);
+    
+    System.out.println("Stream.noneMatch() - Нет отрицательных цен: " + 
+                      (noneNegative ? "Да" : "Нет"));
+}
+```
+
+**Использование в шаблонной функции:**
+```cpp
+// Файл: videoprokat/TemplateUtils.hpp
+template<typename T, typename Predicate>
+bool anyOf(const std::vector<T>& source, Predicate pred)
+{
+    return std::any_of(source.begin(), source.end(), pred);
+}
+```
+
+**Вывод:**
+```
+std::any_of - Есть цены > 65: Да
+std::all_of - Все цены положительные: Да
+std::none_of - Нет отрицательных цен: Да
+```
+
+---
+
+#### 9. std::variant ↔ Object / sealed classes
+
+**Описание:** Тип-объединение, который может хранить значение одного из нескольких типов.
+
+**C++:**
+```cpp
+// Файл: videoprokat/STLDemo.cpp.example
+#include <variant>
+
+void demonstrateVariant()
+{
+    // std::variant может хранить один из нескольких типов
+    using ClientData = std::variant<int, double, std::string>;
+    
+    ClientData data;
+    
+    // Хранит int
+    data = 123;
+    std::cout << "std::variant:\n";
+    std::cout << "   ID клиента (int): " << std::get<int>(data) << "\n";
+    
+    // Хранит double
+    data = 99.99;
+    std::cout << "   Баланс (double): " << std::get<double>(data) << "\n";
+    
+    // Хранит string
+    data = std::string("Иван Иванов");
+    std::cout << "   Имя (string): " << std::get<std::string>(data) << "\n";
+    
+    // Проверка текущего типа
+    if (std::holds_alternative<std::string>(data)) {
+        std::cout << "   Текущий тип: string\n";
+    }
+    
+    // Visitor pattern - обработка любого типа
+    std::visit([](auto&& value) {
+        std::cout << "   Значение через visitor: " << value << "\n";
+    }, data);
+    
+    // Получение индекса типа
+    std::cout << "   Индекс типа: " << data.index() << "\n";
+}
+```
+
+**Java (Object):**
+```java
+// Файл: CollectionsDemo.java
+public static void demonstrateVariant() {
+    // В Java нет прямого аналога, используется Object
+    Object data;
+    
+    // Хранит Integer
+    data = 123;
+    System.out.println("Object:");
+    System.out.println("   ID клиента (Integer): " + data);
+    
+    // Хранит Double
+    data = 99.99;
+    System.out.println("   Баланс (Double): " + data);
+    
+    // Хранит String
+    data = "Иван Иванов";
+    System.out.println("   Имя (String): " + data);
+    
+    // Проверка текущего типа
+    if (data instanceof String) {
+        System.out.println("   Текущий тип: String");
+        String name = (String) data;  // Требуется приведение типа
+    }
+}
+```
+
+**Java (Sealed Classes - Java 17+):**
+```java
+// Более типобезопасная альтернатива с sealed классами
+sealed interface ClientData permits IntData, DoubleData, StringData {
+    Object getValue();
+}
+
+record IntData(int value) implements ClientData {
+    public Object getValue() { return value; }
+}
+
+record DoubleData(double value) implements ClientData {
+    public Object getValue() { return value; }
+}
+
+record StringData(String value) implements ClientData {
+    public Object getValue() { return value; }
+}
+
+// Использование с pattern matching
+String process(ClientData data) {
+    return switch(data) {
+        case IntData(int val) -> "ID: " + val;
+        case DoubleData(double val) -> "Balance: " + val;
+        case StringData(String val) -> "Name: " + val;
+    };
+}
+```
+
+**Вывод:**
+```
+std::variant:
+   ID клиента (int): 123
+   Баланс (double): 99.99
+   Имя (string): Иван Иванов
+   Текущий тип: string
+   Значение через visitor: Иван Иванов
+   Индекс типа: 2
+```
+
+**Использование в реальном коде:**
+```cpp
+// Вариант для хранения результата операции
+using OperationResult = std::variant<
+    std::string,           // Успешное сообщение
+    std::exception_ptr,    // Ошибка
+    int                    // Код результата
+>;
+
+OperationResult performOperation() {
+    try {
+        // ... операция ...
+        return std::string("Успешно");
+    } catch (...) {
+        return std::current_exception();
+    }
+}
+```
+
+---
+
+## Сравнительная Таблица Контейнеров и Методов
+
+| Концепция | C++ STL | Java Collections | Примечания |
+|-----------|---------|------------------|------------|
+| **Фиксированный массив** | `std::array<T, N>` | `T[]` | C++ знает размер, Java - нет |
+| **Динамический массив** | `std::vector<T>` | `ArrayList<T>` | Оба с автоувеличением |
+| **Связный список** | `std::list<T>` | `LinkedList<T>` | Двусвязный список в обоих |
+| **Словарь** | `std::map<K,V>` (упорядоченный) | `HashMap<K,V>` (неупорядоченный) | C++ - дерево, Java - хеш-таблица |
+| **Представление** | `std::span<T>` (C++20) | `List.subList()` | Легковесное, не копирует |
+| **Мин/Макс** | `std::min_element` | `Collections.min` | Возвращает итератор vs значение |
+| **Поиск** | `std::find_if` | `stream().filter().findFirst()` | C++ - итератор, Java - Optional |
+| **Копирование с фильтром** | `std::copy_if` | `stream().filter().collect()` | Оба создают новый контейнер |
+| **Удаление** | `std::remove_if + erase` | `removeIf()` | C++ - два шага, Java - один |
+| **Сортировка** | `std::sort` | `Collections.sort` | In-place в обоих |
+| **Ленивая фильтрация** | `std::views::filter` (C++20) | `stream().filter()` | Не создает копию до терминальной операции |
+| **Преобразование** | `std::transform` | `stream().map()` | Применяет функцию к каждому элементу |
+| **Проверка условия** | `std::any_of` | `stream().anyMatch()` | True если хотя бы один элемент |
+| **Вариантный тип** | `std::variant<...>` | `Object` или sealed classes | C++ - типобезопасно, Java - требует приведения |
+
+---
+
 ## Заключение
 
 Все требования задания L5, включая работу с STL и Collections Framework, успешно реализованы и задокументированы. Проект демонстрирует глубокое понимание:
