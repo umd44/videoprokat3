@@ -1,0 +1,58 @@
+# C++
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+*.app
+*.obj
+*.lib
+*.pdb
+*.ilk
+*.exp
+*.asm
+Debug/
+Release/
+x64/
+x86/
+ipch/
+*.sln.docstates
+.vs/
+.vscode/
+CMakeLists.txt.user
+cmake-build-debug/
+cmake-build-release/
+
+# Java
+*.class
+*.jar
+*.zip
+*.tar.gz
+target/
+*.classpath
+*.project
+.settings/
+.idea/
+*.iml
+
+# C#
+bin/
+obj/
+*.csproj.user
+*.sln
+packages/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build outputs
+build/
+dist/
+*.log
