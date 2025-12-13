@@ -156,7 +156,11 @@ videoprokat/
 ├── ReportGenerator.java           # Абстрактный генератор отчетов
 ├── ReportGeneratorReal.java       # Реализация генератора
 ├── VideoprokatDemo.java           # Базовая демонстрация
-└── VideoprokatFinalDemo.java      # Финальная демонстрация
+├── VideoprokatFinalDemo.java      # Финальная демонстрация
+├── README.md                      # Основная документация проекта
+├── OOP_PRINCIPLES.md              # Детальное описание принципов ООП
+├── CHANGELOG.md                   # История изменений и версии
+└── .gitignore                     # Правила игнорирования файлов
 ```
 
 ## Компиляция и запуск
@@ -216,12 +220,245 @@ java videoprokat.VideoprokatFinalDemo
 - **Strategy** - различные стратегии расчета стоимости и штрафов
 - **Repository** - каталог как хранилище носителей
 
-### ООП принципы
+### Реализация основных принципов ООП
 
-- **Инкапсуляция** - protected поля, публичные методы доступа
-- **Наследование** - абстрактные классы и их реализации
-- **Полиморфизм** - работа через интерфейсы абстрактных классов
-- **Абстракция** - выделение общих черт в абстрактные классы
+> 📖 **Детальное описание**: Полное описание реализации принципов ООП с подробными примерами кода доступно в файле [OOP_PRINCIPLES.md](OOP_PRINCIPLES.md)
+
+Проект полностью построен на трех фундаментальных принципах объектно-ориентированного программирования:
+
+#### 1. Инкапсуляция (Encapsulation)
+
+Инкапсуляция - это сокрытие внутренней реализации объекта и предоставление доступа к данным только через публичные методы.
+
+**Примеры реализации в проекте:**
+
+```java
+// Класс Client
+public abstract class Client {
+    protected int clientId;              // Защищенные поля
+    protected String firstName;
+    protected String lastName;
+    protected double depositBalance;
+    protected boolean blacklisted;
+    
+    // Публичные методы доступа (геттеры)
+    public abstract int getClientId();
+    public abstract String getFirstName();
+    public abstract double getDepositBalance();
+    
+    // Публичные методы изменения (сеттеры с валидацией)
+    public abstract void addToDeposit(double amount);
+    public abstract boolean blockDepositFunds(double amount);
+}
+
+// Класс ClientReal - реализация с контролем доступа
+public class ClientReal extends Client {
+    @Override
+    public void addToDeposit(double amount) {
+        if (amount > 0.0) {              // Валидация данных
+            depositBalance += amount;     // Контролируемое изменение
+        }
+    }
+    
+    @Override
+    public boolean blockDepositFunds(double amount) {
+        if (amount <= 0.0) {
+            return false;                 // Защита от некорректных данных
+        }
+        if (depositBalance >= amount) {
+            depositBalance -= amount;
+            return true;
+        }
+        return false;                     // Контроль бизнес-логики
+    }
+}
+```
+
+**Преимущества инкапсуляции в проекте:**
+- Защищенные поля (`protected`) не доступны напрямую извне
+- Все изменения данных проходят через методы с валидацией
+- Невозможно установить некорректное состояние объекта (например, отрицательный депозит)
+- Внутреннюю реализацию можно изменить без влияния на внешний код
+
+#### 2. Наследование (Inheritance)
+
+Наследование - это механизм создания новых классов на основе существующих, позволяющий повторно использовать код и создавать иерархии классов.
+
+**Примеры реализации в проекте:**
+
+```java
+// Базовый абстрактный класс VideoCarrier
+public abstract class VideoCarrier {
+    protected int inventoryNumber;
+    protected String title;
+    protected String status;
+    
+    protected VideoCarrier() {           // Базовый конструктор
+        this.status = "available";
+    }
+    
+    public abstract boolean isAvailable();
+    public abstract void markAsRented();
+}
+
+// Конкретная реализация наследует все поля и методы
+public class VideoCarrierReal extends VideoCarrier {
+    
+    public VideoCarrierReal() {
+        super();                         // Вызов конструктора родителя
+    }
+    
+    @Override
+    public boolean isAvailable() {       // Реализация абстрактного метода
+        return "available".equals(status);
+    }
+    
+    @Override
+    public void markAsRented() {
+        status = "rented";               // Доступ к protected полям родителя
+    }
+}
+```
+
+**Иерархия наследования в проекте:**
+
+```
+User                    Client                  VideoCarrier
+  ↑                       ↑                         ↑
+  |                       |                         |
+UserReal              ClientReal              VideoCarrierReal
+
+RentalManager         Rental                  Catalog
+  ↑                     ↑                         ↑
+  |                     |                         |
+RentalManagerReal    RentalReal              CatalogReal
+
+FinancialCalculator   ReportGenerator
+  ↑                     ↑
+  |                     |
+FinancialCalculatorReal ReportGeneratorReal
+```
+
+**Преимущества наследования в проекте:**
+- Повторное использование кода базовых классов
+- Единая структура данных для всех наследников
+- Возможность расширения функциональности без изменения базового класса
+- Логическая группировка связанных классов
+
+#### 3. Полиморфизм (Polymorphism)
+
+Полиморфизм - это способность объектов разных классов реагировать на одни и те же методы по-разному, позволяя работать с объектами через общий интерфейс.
+
+**Примеры реализации в проекте:**
+
+```java
+// Пример 1: Полиморфизм через абстрактные классы
+public class VideoprokatFinalDemo {
+    public static void main(String[] args) {
+        // Работаем через абстрактный тип
+        Catalog catalog = new CatalogReal();           // Полиморфное присваивание
+        Client client = new ClientReal(1, "Ivan", "Ivanov", "+7-123");
+        VideoCarrier movie = new VideoCarrierReal(100, "Matrix", "DVD", "Sci-Fi", 50, 500);
+        
+        // Вызовы методов работают одинаково независимо от реализации
+        catalog.addItem(movie);                        // Полиморфный вызов
+        VideoCarrier found = catalog.findItemByNumber(100);
+        
+        // Можно легко заменить реализацию без изменения кода
+        RentalManager manager = new RentalManagerReal();  // Полиморфизм
+        Rental rental = manager.createRental(client, items, 3, "2025-01-15", "2025-01-18");
+    }
+}
+
+// Пример 2: Полиморфизм в методах
+public class CatalogReal extends Catalog {
+    @Override
+    public List<VideoCarrier> getAvailableItems() {
+        List<VideoCarrier> result = new ArrayList<>();
+        for (VideoCarrier item : items) {
+            if (item != null && item.isAvailable()) {  // Полиморфный вызов
+                result.add(item);
+            }
+        }
+        return result;
+    }
+}
+
+// Пример 3: Полиморфизм в обработке различных сценариев
+public class RentalManagerReal extends RentalManager {
+    @Override
+    public double processReturn(Rental rental, int overdueDays) {
+        // Работа через абстрактный тип
+        for (VideoCarrier item : rental.getItems()) {
+            item.markAsAvailable();      // Полиморфный вызов - работает для любой реализации
+            item.incrementRentals();
+        }
+        return rental.closeRental(fine); // Полиморфный вызов
+    }
+    
+    @Override
+    public double processReturnWithDamage(Rental rental, int overdueDays, 
+                                           VideoCarrier damagedItem, 
+                                           String damageType, double compensation) {
+        // Разное поведение в зависимости от типа повреждения
+        for (VideoCarrier item : rental.getItems()) {
+            if (item == damagedItem) {
+                if ("critical".equalsIgnoreCase(damageType)) {
+                    item.setStatus("written_off");      // Один метод, разное поведение
+                } else if ("minor".equalsIgnoreCase(damageType)) {
+                    item.setStatus("maintenance");
+                } else {
+                    item.markAsAvailable();
+                }
+            }
+        }
+        return rental.closeRental(fine + compensation);
+    }
+}
+```
+
+**Преимущества полиморфизма в проекте:**
+- Единый интерфейс для работы с разными реализациями
+- Возможность легко добавлять новые реализации без изменения существующего кода
+- Упрощение кода - не нужно знать конкретный тип объекта
+- Гибкость - можно менять реализацию в runtime
+
+**Практическое применение всех трех принципов:**
+
+```java
+// Демонстрация комбинированного использования всех принципов ООП
+public void processRental() {
+    // ПОЛИМОРФИЗМ: работаем через абстрактные типы
+    Client client = new ClientReal(1, "Ivan", "Petrov", "+7-123");
+    Catalog catalog = new CatalogReal();
+    RentalManager manager = new RentalManagerReal();
+    
+    // ИНКАПСУЛЯЦИЯ: доступ к данным только через методы
+    client.addToDeposit(1000.0);              // Контролируемое изменение
+    double balance = client.getDepositBalance(); // Безопасное чтение
+    
+    // НАСЛЕДОВАНИЕ: используем функциональность базовых классов
+    VideoCarrier movie = new VideoCarrierReal(100, "Matrix", "DVD", "Sci-Fi", 50, 500);
+    movie.setReleaseYear(1999);               // Метод из расширенной функциональности
+    movie.setDirector("Wachowski");
+    
+    catalog.addItem(movie);
+    
+    // ПОЛИМОРФИЗМ: вызов методов работает независимо от конкретной реализации
+    List<VideoCarrier> available = catalog.getAvailableItems();
+    Rental rental = manager.createRental(client, available, 3, "2025-01-15", "2025-01-18");
+    
+    // Все три принципы работают вместе для создания гибкой и расширяемой системы
+}
+```
+
+**Сводная таблица реализации принципов ООП:**
+
+| Принцип ООП | Где реализовано | Как реализовано | Примеры в коде |
+|-------------|-----------------|-----------------|----------------|
+| **Инкапсуляция** | Все классы системы | - `protected` поля<br>- Публичные геттеры/сеттеры<br>- Валидация в методах | `Client.addToDeposit()` проверяет amount > 0<br>`Client.blockDepositFunds()` проверяет достаточность средств |
+| **Наследование** | 8 пар классов | - Абстрактные базовые классы<br>- Конкретные реализации `*Real`<br>- Вызов `super()` | `ClientReal extends Client`<br>`VideoCarrierReal extends VideoCarrier`<br>`CatalogReal extends Catalog` |
+| **Полиморфизм** | Весь код системы | - Работа через абстрактные типы<br>- Переопределение методов<br>- Полиморфные коллекции | `Catalog catalog = new CatalogReal()`<br>`List<VideoCarrier> items`<br>`item.isAvailable()` работает для любой реализации |
 
 ### Обработка различных сценариев
 
@@ -241,6 +478,22 @@ java videoprokat.VideoprokatFinalDemo
 5. **Уведомления** - SMS/Email уведомления клиентам
 6. **Скидки** - гибкая система скидок и акций
 7. **Аналитика** - расширенная аналитика и прогнозирование
+
+## Документация
+
+Проект включает полную документацию:
+
+- **[README.md](README.md)** - основная документация проекта с описанием архитектуры, модулей и инструкциями
+- **[OOP_PRINCIPLES.md](OOP_PRINCIPLES.md)** - детальное описание реализации принципов ООП с примерами кода
+- **[CHANGELOG.md](CHANGELOG.md)** - история изменений, версии и планы развития проекта
+
+### Быстрые ссылки
+
+- [Архитектура системы](#архитектура-системы)
+- [Реализация принципов ООП](#реализация-основных-принципов-ооп)
+- [Компиляция и запуск](#компиляция-и-запуск)
+- [Структура проекта](#структура-проекта)
+- [Демонстрационные сценарии](#демонстрационные-сценарии)
 
 ## Автор
 
