@@ -30,9 +30,22 @@ public abstract class RentalManager {
     public abstract double processReturn(Rental rental, int overdueDays);
 
     /**
+     * Обработать возврат аренды с учетом повреждений.
+     */
+    public abstract double processReturnWithDamage(Rental rental, int overdueDays, 
+                                                    VideoCarrier damagedItem, 
+                                                    String damageType, 
+                                                    double damageCompensation);
+
+    /**
      * Получить список просроченных аренд.
      */
     public abstract List<Rental> getOverdueRentals(String currentDate);
+
+    /**
+     * Получить список всех активных аренд.
+     */
+    public abstract List<Rental> getActiveRentals();
 
     /**
      * Закрыть менеджер и освободить ресурсы.

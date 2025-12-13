@@ -2,6 +2,7 @@ package videoprokat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Реализация класса ReportGenerator.
@@ -42,6 +43,103 @@ public class ReportGeneratorReal extends ReportGenerator {
                 }
             }
         }
+        return builder.toString();
+    }
+
+    @Override
+    public String generateOverdueReport(List<Rental> overdueRentals) {
+        StringBuilder builder = new StringBuilder("=== ОТЧЕТ ПО ПРОСРОЧКАМ ===\n");
+        if (overdueRentals == null || overdueRentals.isEmpty()) {
+            builder.append("Просроченных аренд нет\n");
+        } else {
+            builder.append("Всего просроченных аренд: ").append(overdueRentals.size()).append("\n\n");
+            for (Rental rental : overdueRentals) {
+                if (rental != null) {
+                    Client client = rental.getClient();
+                    builder.append("Аренда #").append(rental.getRentalId())
+                           .append(" | Клиент: ").append(client.getFirstName())
+                           .append(" ").append(client.getLastName())
+                           .append(" | Тел: ").append(client.getPhoneNumber())
+                           .append(" | План.возврат: ").append(rental.getPlannedReturnDate())
+                           .append("\n");
+                }
+            }
+        }
+        return builder.toString();
+    }
+
+    @Override
+    public String generateClientReport(List<Client> clients) {
+        StringBuilder builder = new StringBuilder("=== ОТЧЕТ ПО КЛИЕНТАМ ===\n");
+        if (clients == null || clients.isEmpty()) {
+            builder.append("Клиенты отсутствуют\n");
+        } else {
+            builder.append("Всего клиентов: ").append(clients.size()).append("\n\n");
+            int active = 0, blacklisted = 0;
+            for (Client client : clients) {
+                if (client != null) {
+                    if (client.isBlacklisted()) {
+                        blacklisted++;
+                    } else {
+                        active++;
+                    }
+                }
+            }
+            builder.append("Активных: ").append(active)
+                   .append(" | В черном списке: ").append(blacklisted).append("\n");
+        }
+        return builder.toString();
+    }
+
+    @Override
+    public String generateTopItemsReport(List<VideoCarrier> topItems) {
+        StringBuilder builder = new StringBuilder("=== ТОП ПОПУЛЯРНЫХ НОСИТЕЛЕЙ ===\n");
+        if (topItems == null || topItems.isEmpty()) {
+            builder.append("Нет данных о популярности\n");
+        } else {
+            int rank = 1;
+            for (VideoCarrier item : topItems) {
+                if (item != null) {
+                    builder.append(rank++).append(". ")
+                           .append(item.getTitle())
+                           .append(" (").append(item.getGenre()).append(")")
+                           .append(" - ").append(item.getTotalRentals()).append(" аренд\n");
+                }
+            }
+        }
+        return builder.toString();
+    }
+
+    @Override
+    public String generateDailyDashboard(int activeRentals, int overdueRentals, 
+                                          double dailyRevenue, int clientsServed,
+                                          Map<String, Integer> statistics) {
+        StringBuilder builder = new StringBuilder("\n");
+        builder.append("╔══════════════════════════════════════════════════════╗\n");
+        builder.append("║         ДАШБОРД ТЕКУЩЕГО ДНЯ (для руководителя)     ║\n");
+        builder.append("╠══════════════════════════════════════════════════════╣\n");
+        builder.append(String.format("║ Активных аренд:           %26d ║\n", activeRentals));
+        builder.append(String.format("║ Просроченных возвратов:   %26d ║\n", overdueRentals));
+        builder.append(String.format("║ Доход за день:            %22.2f руб ║\n", dailyRevenue));
+        builder.append(String.format("║ Обслужено клиентов:       %26d ║\n", clientsServed));
+        builder.append("╠══════════════════════════════════════════════════════╣\n");
+        builder.append("║                СТАТИСТИКА НОСИТЕЛЕЙ                  ║\n");
+        builder.append("╠══════════════════════════════════════════════════════╣\n");
+        
+        if (statistics != null) {
+            builder.append(String.format("║ Всего носителей:          %26d ║\n", 
+                statistics.getOrDefault("total", 0)));
+            builder.append(String.format("║ Доступных:                %26d ║\n", 
+                statistics.getOrDefault("available", 0)));
+            builder.append(String.format("║ Арендованных:             %26d ║\n", 
+                statistics.getOrDefault("rented", 0)));
+            builder.append(String.format("║ На реставрации:           %26d ║\n", 
+                statistics.getOrDefault("maintenance", 0)));
+            builder.append(String.format("║ Списанных:                %26d ║\n", 
+                statistics.getOrDefault("written_off", 0)));
+        }
+        
+        builder.append("╚══════════════════════════════════════════════════════╝\n");
         return builder.toString();
     }
 

@@ -10,9 +10,14 @@ public abstract class VideoCarrier {
     protected String title;
     protected String carrierType;
     protected String genre;
+    protected int releaseYear;
+    protected String director;
+    protected String ageRating;
+    protected String description;
     protected double rentalPricePerDay;
     protected double fullPrice;
     protected String status;
+    protected int totalRentals;
 
     /**
      * Конструктор по умолчанию.
@@ -23,9 +28,14 @@ public abstract class VideoCarrier {
         this.title = "";
         this.carrierType = "";
         this.genre = "";
+        this.releaseYear = 0;
+        this.director = "";
+        this.ageRating = "0+";
+        this.description = "";
         this.rentalPricePerDay = 0.0;
         this.fullPrice = 0.0;
         this.status = "available";
+        this.totalRentals = 0;
     }
 
     /**
@@ -37,9 +47,14 @@ public abstract class VideoCarrier {
         this.title = title;
         this.carrierType = carrierType;
         this.genre = genre;
+        this.releaseYear = 0;
+        this.director = "";
+        this.ageRating = "0+";
+        this.description = "";
         this.rentalPricePerDay = rentalPricePerDay;
         this.fullPrice = fullPrice;
         this.status = "available";
+        this.totalRentals = 0;
     }
 
     /**
@@ -91,4 +106,59 @@ public abstract class VideoCarrier {
      * Пометить носитель как доступный.
      */
     public abstract void markAsAvailable();
+
+    /**
+     * Получить год выпуска.
+     */
+    public abstract int getReleaseYear();
+
+    /**
+     * Получить режиссера/разработчика.
+     */
+    public abstract String getDirector();
+
+    /**
+     * Получить возрастной рейтинг.
+     */
+    public abstract String getAgeRating();
+
+    /**
+     * Получить описание.
+     */
+    public abstract String getDescription();
+
+    /**
+     * Получить количество аренд.
+     */
+    public abstract int getTotalRentals();
+
+    /**
+     * Установить год выпуска.
+     */
+    public abstract void setReleaseYear(int year);
+
+    /**
+     * Установить режиссера/разработчика.
+     */
+    public abstract void setDirector(String director);
+
+    /**
+     * Установить возрастной рейтинг.
+     */
+    public abstract void setAgeRating(String ageRating);
+
+    /**
+     * Установить описание.
+     */
+    public abstract void setDescription(String description);
+
+    /**
+     * Увеличить счетчик аренд.
+     */
+    public abstract void incrementRentals();
+
+    /**
+     * Установить статус носителя.
+     */
+    public abstract void setStatus(String status);
 }

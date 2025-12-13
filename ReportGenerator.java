@@ -1,6 +1,7 @@
 package videoprokat;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Абстрактный класс, описывающий генератор отчетов.
@@ -28,4 +29,26 @@ public abstract class ReportGenerator {
      * Сгенерировать отчет об инвентаре.
      */
     public abstract String generateInventoryReport(List<VideoCarrier> items);
+
+    /**
+     * Сгенерировать отчет по просрочкам.
+     */
+    public abstract String generateOverdueReport(List<Rental> overdueRentals);
+
+    /**
+     * Сгенерировать отчет по клиентам.
+     */
+    public abstract String generateClientReport(List<Client> clients);
+
+    /**
+     * Сгенерировать отчет по топ носителям.
+     */
+    public abstract String generateTopItemsReport(List<VideoCarrier> topItems);
+
+    /**
+     * Сгенерировать дашборд текущего дня.
+     */
+    public abstract String generateDailyDashboard(int activeRentals, int overdueRentals, 
+                                                   double dailyRevenue, int clientsServed,
+                                                   Map<String, Integer> statistics);
 }

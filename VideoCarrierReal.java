@@ -71,6 +71,61 @@ public class VideoCarrierReal extends VideoCarrier {
         status = "available";
     }
 
+    @Override
+    public int getReleaseYear() {
+        return releaseYear;
+    }
+
+    @Override
+    public String getDirector() {
+        return director;
+    }
+
+    @Override
+    public String getAgeRating() {
+        return ageRating;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public int getTotalRentals() {
+        return totalRentals;
+    }
+
+    @Override
+    public void setReleaseYear(int year) {
+        this.releaseYear = year;
+    }
+
+    @Override
+    public void setDirector(String director) {
+        this.director = director;
+    }
+
+    @Override
+    public void setAgeRating(String ageRating) {
+        this.ageRating = ageRating;
+    }
+
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public void incrementRentals() {
+        this.totalRentals++;
+    }
+
+    @Override
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     /**
      * Деконструктор (финализатор).
      * Вызывается перед удалением объекта сборщиком мусора.

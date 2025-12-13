@@ -48,6 +48,7 @@ public class RentalManagerReal extends RentalManager {
         for (VideoCarrier item : rental.getItems()) {
             if (item != null) {
                 item.markAsAvailable();
+                item.incrementRentals();
             }
         }
         double total = rental.closeRental(fine);
@@ -62,6 +63,47 @@ public class RentalManagerReal extends RentalManager {
     }
 
     @Override
+    public double processReturnWithDamage(Rental rental, int overdueDays, 
+                                           VideoCarrier damagedItem, 
+                                           String damageType, 
+                                           double damageCompensation) {
+        if (rental == null) {
+            return 0.0;
+        }
+        
+        double fine = calculator.calculateOverdueFine(overdueDays);
+        
+        for (VideoCarrier item : rental.getItems()) {
+            if (item != null) {
+                if (item == damagedItem) {
+                    if ("critical".equalsIgnoreCase(damageType)) {
+                        item.setStatus("written_off");
+                    } else if ("minor".equalsIgnoreCase(damageType)) {
+                        item.setStatus("maintenance");
+                    } else {
+                        item.markAsAvailable();
+                    }
+                } else {
+                    item.markAsAvailable();
+                }
+                item.incrementRentals();
+            }
+        }
+        
+        double total = rental.closeRental(fine + damageCompensation);
+        
+        Iterator<Rental> iterator = activeRentals.iterator();
+        while (iterator.hasNext()) {
+            if (iterator.next() == rental) {
+                iterator.remove();
+                break;
+            }
+        }
+        
+        return total;
+    }
+
+    @Override
     public List<Rental> getOverdueRentals(String currentDate) {
         List<Rental> result = new ArrayList<>();
         for (Rental rental : activeRentals) {
@@ -70,6 +112,11 @@ public class RentalManagerReal extends RentalManager {
             }
         }
         return result;
+    }
+
+    @Override
+    public List<Rental> getActiveRentals() {
+        return new ArrayList<>(activeRentals);
     }
 
     @Override
