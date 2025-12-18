@@ -1,0 +1,15 @@
+2001    |The Matrix                          |Blu-ray   |Science Fiction |1999  |The Wachowskis        |16+   |100.00    |800.00    
+2005    |The Lord of the Rings: The Fellowship of the Ring|Blu-ray   |Fantasy         |2001  |Peter Jackson         |12+   |178.00    |950.00    
+2003    |Finding Nemo                        |DVD       |Animation       |2003  |Andrew Stanton        |0+    |100.00    |600.00    
+2010    |The Dark Knight                     |Blu-ray   |Action          |2008  |Christopher Nolan     |16+   |152.00    |1100.00   
+2015    |Game of Thrones: Season 1           |Blu-ray   |Fantasy         |2011  |David Benioff & D.B. Weiss|18+   |567.00    |1200.00   
+2009    |Pulp Fiction                        |DVD       |Crime           |1994  |Quentin Tarantino     |18+   |154.00    |700.00    
+2012    |Inception                           |Blu-ray   |Thriller        |2010  |Christopher Nolan     |12+   |148.00    |950.00    
+2004    |Shrek                               |DVD       |Animation       |2001  |Andrew Adamson & Vicky Jenson|0+    |90.00     |550.00    
+2018    |Stranger Things: Season 2           |Blu-ray   |Horror          |2017  |The Duffer Brothers   |16+   |450.00    |1300.00   
+2006    |Gladiator                           |DVD       |Historical Drama|2000  |Ridley Scott          |16+   |155.00    |750.00    
+2013    |Breaking Bad: The Final Season      |Blu-ray   |Drama           |2013  |Vince Gilligan        |18+   |480.00    |1100.00   
+2002    |The Silence of the Lambs            |DVD       |Thriller        |1991  |Jonathan Demme        |18+   |118.00    |500.00    
+2016    |Interstellar                        |Blu-ray   |Science Fiction |2014  |Christopher Nolan     |12+   |169.00    |1050.00   
+2014    |Sherlock: Series 3                  |Blu-ray   |Detective       |2014  |Mark Gatiss & Steven Moffat|16+   |270.00    |900.00    
+2019    |Brat                                |DVD       |Boevik          |1996  |Vlad                  |18+   |124.00    |2432.00   

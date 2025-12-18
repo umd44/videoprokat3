@@ -1,0 +1,15 @@
+1001|Ivan|Ivanov|Ivanich|+77777777777|grie@mail.ru|5423|345634|1999-03-02|2025-01-18|0|0
+1002|Petr|Popov|+79998888756|Ivanovich|eurgui@mail.com|2343|123456|1999-02-13|2025-01-18|0|0
+1003|Anna|Smirnova|Petrovna|+79161234567|anna.s@mail.ru|6789|456123|1985-07-21|2025-01-18|0|0
+1004|Sergey|Kuznetsov|+79265544332|Sergeevich|serg@yandex.ru|1122|789012|1992-11-30|2025-01-18|0|0
+1005|Maria|Volkova|Alexandrovna|+79030001122|m.volk@gmail.com|3344|567890|1998-05-14|2025-01-18|0|0
+1006|Dmitry|Orlov|+79517778899|Petrovich|dimon.orlov@mail.com|4455|135790|1990-09-08|2025-01-18|0|0
+1007|Elena|Nikolaeva|Dmitrievna|+79993334455|elena.n@mail.ru|5566|246801|1987-12-25|2025-01-18|0|0
+1008|Alexey|Mikhailov|+79118765432|Alexandrovich|a.mikhailov@yandex.ru|6677|112233|1995-04-17|2025-01-18|0|0
+1009|Olga|Pavlova|Sergeevna|+79634567890|olga.p@gmail.com|7788|998877|1993-08-03|2025-01-18|0|0
+1010|Igor|Sokolov|+79051112233|Ivanovich|i.sokolov@mail.ru|8899|665544|1989-01-11|2025-01-18|0|0
+1011|Natalia|Fedorova|Igorevna|+79204445566|nata.f@yandex.ru|9900|443322|1996-10-29|2025-01-18|0|0
+1012|Victor|Morozov|+79668889900|Viktorovich|v.moroz@mail.com|1010|889977|1991-06-06|2025-01-18|0|0
+1013|Tatiana|Zaitseva|Olegovna|+79152345678|t.zayka@gmail.com|2020|776655|1994-02-28|2025-01-18|0|0
+1014|Pavel|Belyaev|+79091234567|Pavlovich|pavel.b@mail.ru|3030|554433|1988-03-15|2025-01-18|0|0
+1015|Ekaterina|Kozlova|Pavlovna|+79995556644|kat.koz@yandex.ru|4040|332211|1997-07-09|2025-01-18|0|0

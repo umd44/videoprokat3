@@ -1,0 +1,6 @@
+#!/bin/bash
+# Helper script for task checking
+# Java files are now in java/ subdirectory
+# C++ files are now in cpp/ subdirectory
+
+cd java && javac -encoding UTF-8 *.java
