@@ -1,0 +1,4 @@
+1     |operator            |1234        |Operator              |Иванов Иван Иванович
+2     |senior              |5678        |Senior Operator       |Петров Петр Петрович
+3     |admin               |admin       |Administrator         |Сидоров Сидор Сидорович
+4     |misha               |0404        |Administrator         |Uhakov M.D.

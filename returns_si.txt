@@ -1,0 +1,6 @@
+# Файл для хранения данных о возвратах
+# Формат: rentalId|clientId|rentalDate|plannedReturnDate|overdueDays|totalReturn|damageFlag
+# Пока пустой для новой системы
+
+1       |1002  |2025-01-18  |2025-01-33  |0   |3150.00   |ok
+1       |1001  |2025-01-18  |2025-01-32  |0   |1400.00   |ok

@@ -1,0 +1,3 @@
+# Файл для хранения данных об аренде
+# Формат: rentalId|clientId|inventoryNumber|rentalDate|returnDate|days|status|deposit|rentalCost|totalCost
+# Пока пустой для новой системы
